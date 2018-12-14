@@ -6,8 +6,8 @@ An object oriented style implementation of an HTTP server programmed in Java.
 #### Setup
 
 * If you don't have Gradle installed, you can download / install from here: https://gradle.org/install/
-* Clone the gil-server repository
-* Change directories into the `gil-server` directory
+* Clone the http-server repository
+* Change directories into the `http-server` directory
 
 #### Running the server
 
