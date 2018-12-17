@@ -1,9 +1,15 @@
 package gil.server;
 
-import java.io.*;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringReader;
+import java.io.StringWriter;
 import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+
 
 public class ServerTest {
     StringReader stringReader = new StringReader("Data coming in...");

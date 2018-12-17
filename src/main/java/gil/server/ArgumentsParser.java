@@ -19,19 +19,21 @@ public class ArgumentsParser {
         return false;
     }
 
-    public int getPortFlagIndexNumber(String[] args) throws Exception {
+    public int getPortFlagIndexNumber(String[] args) throws MissingPortFlagException {
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals(portFlag)) return i;
         }
-        throw new Exception();
+        throw new MissingPortFlagException();
     }
 
-    public int getPortFlagValue(String[] args) throws Exception {
-        int portFlagIndex = getPortFlagIndexNumber(args);
-        int portFlagValueIndex = portFlagIndex + 1;
-        if (portIsValid(args[portFlagValueIndex])){
-            return Integer.parseInt(args[portFlagValueIndex]);
-        }
-        throw new Exception();
+    public int getPortFlagValue(String[] args) throws MissingPortFlagException {
+            int portFlagIndex = getPortFlagIndexNumber(args);
+            int portFlagValueIndex = portFlagIndex + 1;
+
+            if (args.length <= portFlagValueIndex || !(portIsValid(args[portFlagValueIndex]))) {
+                throw new MissingPortFlagException();
+            } else {
+                return Integer.parseInt(args[portFlagValueIndex]);
+            }
     }
  }
