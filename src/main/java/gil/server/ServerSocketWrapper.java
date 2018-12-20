@@ -26,7 +26,7 @@ public class ServerSocketWrapper implements ServerSocketWrapperInterface {
 
     public void createAndListen(int port) throws Exception {
         createServerSocket(port);
-        System.out.println("Server is listening to connections on port: " + Integer.toString(port));
+        System.out.println("Server is listening to connections on port: " + port);
         listenForConnections();
     }
 
@@ -38,13 +38,16 @@ public class ServerSocketWrapper implements ServerSocketWrapperInterface {
     }
 
     private void processRequest(BufferedReader connectionInput, PrintWriter connectionOutput) throws Exception {
-        Response helloWorld = new Response();
-        connectionOutput.println(helloWorld.getStartLine());
-        connectionOutput.println(helloWorld.getDate());
-        connectionOutput.println(helloWorld.getContentType());
-        connectionOutput.println(helloWorld.getContentLength());
+        Response response;
+        String request = connectionInput.readLine();
+        Handler handler = new Handler();
+        response = handler.processRequest(request);
+        connectionOutput.println(response.getStartLine());
+        connectionOutput.println(response.getDate());
+        connectionOutput.println(response.getContentType());
+        connectionOutput.println(response.getContentLength());
         connectionOutput.println();
-        connectionOutput.println(helloWorld.getBody());
+        connectionOutput.println(response.getBody());
     }
 
     public String receiveData() throws IOException {
