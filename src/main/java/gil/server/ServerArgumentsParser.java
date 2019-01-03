@@ -1,7 +1,7 @@
 package gil.server;
 
-public class ArgumentsParser {
-    String portFlag = "port";
+public class ServerArgumentsParser {
+    String PORT_FLAG = "port";
 
     public Boolean portIsValid(String port) {
         try {
@@ -14,24 +14,24 @@ public class ArgumentsParser {
 
     public Boolean hasPortFlag(String[] args) {
         for (String arg : args) {
-            if (arg.equals(portFlag)) return true;
+            if (arg.equals(PORT_FLAG)) return true;
         }
         return false;
     }
 
-    public int getPortFlagIndexNumber(String[] args) throws MissingPortFlagException {
+    public int getPortFlagIndexNumber(String[] args) throws ServerMissingPortFlagException {
         for (int i = 0; i < args.length; i++) {
-            if (args[i].equals(portFlag)) return i;
+            if (args[i].equals(PORT_FLAG)) return i;
         }
-        throw new MissingPortFlagException();
+        throw new ServerMissingPortFlagException();
     }
 
-    public int getPortFlagValue(String[] args) throws MissingPortFlagException {
+    public int getPortFlagValue(String[] args) throws ServerMissingPortFlagException {
             int portFlagIndex = getPortFlagIndexNumber(args);
             int portFlagValueIndex = portFlagIndex + 1;
 
             if (args.length <= portFlagValueIndex || !(portIsValid(args[portFlagValueIndex]))) {
-                throw new MissingPortFlagException();
+                throw new ServerMissingPortFlagException();
             } else {
                 return Integer.parseInt(args[portFlagValueIndex]);
             }

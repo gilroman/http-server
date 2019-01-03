@@ -2,62 +2,59 @@ package gil.server;
 
 import java.io.BufferedReader;
 import java.io.PrintWriter;
-import java.io.InputStreamReader;
-import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 public class ServerSocketWrapper implements ServerSocketWrapperInterface {
     private ServerSocket serverSocket;
-    private Socket connection;
-    private BufferedReader connectionInput;
-    private PrintWriter connectionOutput;
+    private Handler handler = new Handler();
 
-    public void createServerSocket(int port) throws Exception {
+    private void createServerSocket(int port) throws Exception {
         serverSocket = new ServerSocket(port);
     }
 
-    public void listenForConnections() throws Exception {
+    private void listenForConnections() throws Exception {
         while(true){
-            connection = serverSocket.accept();
+            Socket socket = serverSocket.accept();
+            SocketWrapper wrappedSocket = new SocketWrapper(socket);
+            Connection connection = new Connection(wrappedSocket);
             handleConnection(connection);
         }
     }
 
     public void createAndListen(int port) throws Exception {
         createServerSocket(port);
-        System.out.println("Server is listening to connections on port: " + Integer.toString(port));
+        System.out.println("Server is listening to connections on port: " + port);
         listenForConnections();
     }
 
-    private void handleConnection(Socket connection) throws Exception {
-        connectionInput = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        connectionOutput = new PrintWriter(connection.getOutputStream());
-        processRequest(connectionInput, connectionOutput);
-        close();
+    private void handleConnection(Connection connection) throws Exception {
+        processRequest(connection);
+        connection.close();
     }
 
-    private void processRequest(BufferedReader connectionInput, PrintWriter connectionOutput) throws Exception {
-        Response helloWorld = new Response();
-        connectionOutput.println(helloWorld.getStartLine());
-        connectionOutput.println(helloWorld.getDate());
-        connectionOutput.println(helloWorld.getContentType());
-        connectionOutput.println(helloWorld.getContentLength());
-        connectionOutput.println();
-        connectionOutput.println(helloWorld.getBody());
+    private void processRequest(Connection connection) throws Exception {
+        BufferedReader input = connection.getInput();
+        PrintWriter output = connection.getOutput();
+        Response response = handler.processRequest(input);
+        sendResponse(output, response);
     }
 
-    public String receiveData() throws IOException {
-        return connectionInput.readLine();
-    }
+    private void sendResponse(PrintWriter output, Response response) {
+        String body = response.getBody();
+        String contentLength = response.getContentLength();
 
-    public void sendData(String data) {
-        connectionOutput.println();
+        System.out.println("the content length is: " + contentLength);
+
+        output.println(response.getStartLine());
+        output.println(response.getDate());
+        output.println(response.getContentType());
+        output.println(contentLength);
+        output.println();
+        if (body != null) output.println(response.getBody());
     }
 
     public void close() throws Exception {
-        connectionOutput.close();
-        connectionInput.close();
-        connection.close();
+        serverSocket.close();
     }
 }

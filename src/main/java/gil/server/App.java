@@ -2,14 +2,14 @@ package gil.server;
 
 public class App {
     public static void main(String[] args) {
-        ArgumentsParser argumentsParser = new ArgumentsParser();
+        ServerArgumentsParser serverArgumentsParser = new ServerArgumentsParser();
         ServerSocketWrapperInterface serverSocket = new ServerSocketWrapper();
 
         try {
             int port;
 
-            if (argumentsParser.hasPortFlag(args)) {
-                port = argumentsParser.getPortFlagValue(args);
+            if (serverArgumentsParser.hasPortFlag(args)) {
+                port = serverArgumentsParser.getPortFlagValue(args);
                 Server server = new Server(serverSocket);
                 server.start(port);
             }

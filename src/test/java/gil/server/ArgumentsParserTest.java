@@ -6,49 +6,49 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertEquals;
 
 public class ArgumentsParserTest {
-    ArgumentsParser argumentsParser = new ArgumentsParser();
+    ServerArgumentsParser serverArgumentsParser = new ServerArgumentsParser();
 
     @Test
     public void testPortIsValid() {
-        assertFalse(argumentsParser.portIsValid(""));
-        assertFalse(argumentsParser.portIsValid("a"));
-        assertFalse(argumentsParser.portIsValid("1024"));
-        assertFalse(argumentsParser.portIsValid("49000"));
-        assertTrue(argumentsParser.portIsValid("1025"));
-        assertTrue(argumentsParser.portIsValid("48999"));
+        assertFalse(serverArgumentsParser.portIsValid(""));
+        assertFalse(serverArgumentsParser.portIsValid("a"));
+        assertFalse(serverArgumentsParser.portIsValid("1024"));
+        assertFalse(serverArgumentsParser.portIsValid("49000"));
+        assertTrue(serverArgumentsParser.portIsValid("1025"));
+        assertTrue(serverArgumentsParser.portIsValid("48999"));
     }
 
     @Test
     public void testHasPortFlag() {
         String[] hasPortFlag = {"a", "0", "port", "4040"};
         String[] missingPortFlag = {"a", "0", "4040"};
-        assertTrue(argumentsParser.hasPortFlag(hasPortFlag));
-        assertFalse(argumentsParser.hasPortFlag(missingPortFlag));
+        assertTrue(serverArgumentsParser.hasPortFlag(hasPortFlag));
+        assertFalse(serverArgumentsParser.hasPortFlag(missingPortFlag));
     }
 
     @Test
-    public void testGetPFlagIndexNumber() throws MissingPortFlagException {
+    public void testGetPFlagIndexNumber() throws ServerMissingPortFlagException {
         String[] hasPortFlag = {"a", "0", "port", "4040"};
-        assertEquals(2, argumentsParser.getPortFlagIndexNumber(hasPortFlag));
+        assertEquals(2, serverArgumentsParser.getPortFlagIndexNumber(hasPortFlag));
     }
 
     @Test
-    public void testGetPortFlagValue() throws MissingPortFlagException {
+    public void testGetPortFlagValue() throws ServerMissingPortFlagException {
         String[] hasPortFlagValue = {"a", "0", "port", "4040"};
         String[] hasPortFlagValueOnly = {"port", "4040"};
-        assertEquals(4040, argumentsParser.getPortFlagValue(hasPortFlagValue));
-        assertEquals(4040, argumentsParser.getPortFlagValue(hasPortFlagValueOnly));
+        assertEquals(4040, serverArgumentsParser.getPortFlagValue(hasPortFlagValue));
+        assertEquals(4040, serverArgumentsParser.getPortFlagValue(hasPortFlagValueOnly));
     }
 
-    @Test(expected = MissingPortFlagException.class)
+    @Test(expected = ServerMissingPortFlagException.class)
     public void shouldThrowAnExceptionWhenThereIsNoPortValue() throws Exception {
         String[] missingPortFlagValue = {"port"};
-        argumentsParser.getPortFlagValue(missingPortFlagValue);
+        serverArgumentsParser.getPortFlagValue(missingPortFlagValue);
     }
 
-    @Test(expected = MissingPortFlagException.class)
+    @Test(expected = ServerMissingPortFlagException.class)
     public void shouldThrowAnExceptionWhenThereIsNoPortFlag() throws Exception {
         String[] missingPortFlag = {"a", "0", "4040"};
-        argumentsParser.getPortFlagValue(missingPortFlag);
+        serverArgumentsParser.getPortFlagValue(missingPortFlag);
     }
 }
