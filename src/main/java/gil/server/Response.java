@@ -86,4 +86,5 @@ public class Response {
     public void setStatusCode(String statusCode) {
         this.statusCode = statusCode;
     }
+
 }

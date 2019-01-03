@@ -93,7 +93,7 @@ public class ResponseTest {
     public void shouldHaveAContentLengthWhenGivenABody() throws UnsupportedEncodingException {
         Response response = new Response();
         response.setBody("<!DOCTYPE html><html lang=\"en-us\"><head></head><body><h1>Hello, world!</h1></body></html>");
-        ;
+
         String contentLength = response.getContentLength();
 
         assertTrue(contentLength.contains("Content-Length:"));

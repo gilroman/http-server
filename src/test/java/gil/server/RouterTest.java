@@ -1,10 +1,8 @@
 package gil.server;
 
 import org.junit.Test;
-
 import java.io.UnsupportedEncodingException;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class RouterTest {
 
@@ -72,5 +70,4 @@ public class RouterTest {
         assertEquals("404", response.getStatusCode());
         assertEquals("Not Found", response.getReasonPhrase());
     }
-
 }

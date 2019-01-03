@@ -49,5 +49,4 @@ public class Stepdefs {
         requestConnection.disconnect();
         assertEquals(code, statusCode);
     }
-
 }

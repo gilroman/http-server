@@ -1,11 +1,9 @@
 package gil.server;
 
 import org.junit.Test;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
-
 import static org.junit.Assert.*;
 
 public class HandlerTest {
