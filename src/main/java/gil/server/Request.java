@@ -5,6 +5,7 @@ import java.util.HashMap;
 public class Request {
     private String body;
     private HashMap<String, String> headerFields;
+    private HashMap<String, String> parameters;
     private String HTTPVersion;
     private String method;
     private String URI;
@@ -20,6 +21,10 @@ public class Request {
     public String getHTTPVersion() { return this.HTTPVersion; }
 
     public String getMethod() { return this.method; }
+
+    public HashMap<String, String> getParameters() {
+        return this.parameters;
+    }
 
     public String getURI() { return this.URI; }
 
@@ -37,6 +42,10 @@ public class Request {
 
     public void setMethod(String method) {
         this.method = method;
+    }
+
+    public void setParameters(HashMap<String, String> parameters) {
+        this.parameters = parameters;
     }
 
     public void setURI(String URI) {

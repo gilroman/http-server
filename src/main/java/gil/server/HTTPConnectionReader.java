@@ -13,8 +13,6 @@ public class HTTPConnectionReader {
         request.put("headers", readHeaders(bufferedReader));
         request.put("body", readBody(bufferedReader));
 
-        System.out.println("the request is: " + request);
-
         return request;
     }
 

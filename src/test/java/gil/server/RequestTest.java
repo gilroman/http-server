@@ -49,7 +49,7 @@ public class RequestTest {
         assertEquals(headerFields, request.getHeaderFields());
     }
 
-    @Test
+   @Test
    public void shouldAllowSettingTheBody() {
         Request request = new Request();
         String body = "<!DOCTYPE=html><html lang=\"en-us\"><head></head><body></body></html>";
@@ -57,5 +57,15 @@ public class RequestTest {
         request.setBody(body);
 
         assertEquals(body, request.getBody());
+    }
+
+    @Test
+    public void shouldAllowSettingTheParameters() {
+        Request request = new Request();
+        HashMap<String, String> parameters = new HashMap<>();
+
+        request.setParameters(parameters);
+
+        assertEquals(parameters, request.getParameters());
     }
 }

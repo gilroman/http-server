@@ -9,7 +9,7 @@ import static org.junit.Assert.assertEquals;
 
 public class HTTPParserTest {
     private final String CRLF = "\r\n";
-    private String data = "GET / HTTP/1.1" + CRLF +
+    private String data = "GET /?let's=go%20surfing&pet=Lula HTTP/1.1" + CRLF +
             "Host: www.gil-server.org" + CRLF +
             "Accept: text/html,application" + CRLF +
             "Accept-Encoding: gzip, deflate, br" + CRLF +
@@ -22,6 +22,7 @@ public class HTTPParserTest {
     @Test
     public void shouldParseRequestAndReturnObjectWithCorrectHTTPMethod() throws IOException {
         String expectedMethod = "GET";
+
         Request request = parser.parse(input);
 
         assertEquals(expectedMethod, request.getMethod());
@@ -30,6 +31,7 @@ public class HTTPParserTest {
     @Test
     public void shouldParseRequestAndReturnObjectWithCorrectURI() throws IOException {
         String expectedURI = "/";
+
         Request request = parser.parse(input);
 
         assertEquals(expectedURI, request.getURI());
@@ -38,6 +40,7 @@ public class HTTPParserTest {
     @Test
     public void shouldParseRequestAndReturnObjectWithCorrectHTTPProtocolVersion() throws IOException {
         String expectedVersion = "1.1";
+
         Request request = parser.parse(input);
 
         assertEquals(expectedVersion, request.getHTTPVersion());
@@ -49,8 +52,20 @@ public class HTTPParserTest {
         expectedHeaderFields.put("Host".toLowerCase(), "www.gil-server.org");
         expectedHeaderFields.put("Accept".toLowerCase(), "text/html,application");
         expectedHeaderFields.put("Accept-Encoding".toLowerCase(), "gzip, deflate, br");
+
         Request request = parser.parse(input);
 
         assertEquals(expectedHeaderFields, request.getHeaderFields());
+    }
+
+    @Test
+    public void shouldParseAQueryWithParameters() throws IOException {
+        HashMap<String, String> expectedQueryHash = new HashMap<>();
+        expectedQueryHash.put("let's", "go surfing");
+        expectedQueryHash.put("pet", "Lula");
+
+        Request request = parser.parse(input);
+
+        assertEquals(expectedQueryHash, request.getParameters());
     }
 }

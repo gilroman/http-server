@@ -49,4 +49,40 @@ public class Stepdefs {
         requestConnection.disconnect();
         assertEquals(code, statusCode);
     }
+
+    @When("I send a GET request with a single query to {string}")
+    public void i_send_a_GET_request_with_a_single_query_to(String endpoint) throws IOException {
+        URL url = new URL(requestProtocol, localhost, port, endpoint);
+        requestConnection = (HttpURLConnection) url.openConnection();
+        requestConnection.setRequestMethod("GET");
+        requestConnection.connect();
+    }
+
+    @Then("I get an HTTP response with a message body containing {string}")
+    public void i_get_an_HTTP_response_with_a_message_body_of(String parameters) throws IOException {
+        String response;
+        BufferedReader in = new BufferedReader(new InputStreamReader(
+                requestConnection.getInputStream()));
+        response = in.readLine();
+        requestConnection.disconnect();
+        assertTrue(response.contains(parameters));
+    }
+
+    @When("I send a GET request with multiple query parameters to {string}")
+    public void i_send_a_GET_request_with_multiple_query_parameters_to(String endpoint) throws IOException {
+        URL url = new URL(requestProtocol, localhost, port, endpoint);
+        requestConnection = (HttpURLConnection) url.openConnection();
+        requestConnection.setRequestMethod("GET");
+        requestConnection.connect();
+    }
+
+    @Then("I get an HTTP response with a message body containing {string} and {string}")
+    public void i_get_an_HTTP_response_with_a_message_body_of(String parameter1, String parameter2) throws IOException {
+        String response;
+        BufferedReader in = new BufferedReader(new InputStreamReader(
+                requestConnection.getInputStream()));
+        response = in.readLine();
+        requestConnection.disconnect();
+        assertTrue(response.contains(parameter1) && response.contains(parameter2));
+    }
 }
