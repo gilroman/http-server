@@ -1,7 +1,5 @@
 package gil.server;
 
-import org.checkerframework.checker.regex.qual.Regex;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -14,9 +12,17 @@ public class HTTPParser {
     private final String CRLF = "\r\n";
     private final String FORWARD_SLASH = "/";
     private final String HEADERS = "headers";
+    private final int INDEX_OF_URI_IN_STARTLINE = 1;
+    private final int INDEX_OF_URI_IN_REQUEST_LINE = 1;
     private final String PROTOCOL = "HTTP";
     private final String REQUEST_LINE = "request-line";
     private final String SPACE = " ";
+    private final String REQUEST_LINE_SEPARATOR = " ";
+    private final String PARAMETER_SEPARATOR = "?";
+    private final String PARAMETER_SEPARATOR_PATTERN = "\\?";
+    private final String MULTIPLE_PARAMETER_SEPARATOR = "&";
+    private final String KEY_VALUE_SEPARATOR = "=";
+
 
     public Boolean isRequestValid(String request) throws HTTPInvalidRequestFormatException {
         if (isEmpty(request) ||
@@ -58,15 +64,12 @@ public class HTTPParser {
 
     public String getRequestURI(String startLine) {
         String[] startLineArray = startLine.split(SPACE);
-        int indexOfUriInStartLine = 1;
-        String parameterSeparator = "?";
-        String parameterSeparatorPattern = "\\?";
-        String URI = startLineArray[indexOfUriInStartLine];
-        Boolean URIHasQuery = URI.contains(parameterSeparator);
+        String URI = startLineArray[INDEX_OF_URI_IN_STARTLINE];
+        Boolean URIHasQuery = URI.contains(PARAMETER_SEPARATOR);
 
         if (URIHasQuery) {
             int indexOfUri = 0;
-            String[] URIArray = URI.split(parameterSeparatorPattern);
+            String[] URIArray = URI.split(PARAMETER_SEPARATOR_PATTERN);
             return URIArray[indexOfUri];
         }
 
@@ -91,20 +94,15 @@ public class HTTPParser {
 
     public HashMap<String, String> getParameters(String requestLine) throws UnsupportedEncodingException {
         HashMap<String, String> parametersHash = new HashMap<>();
-        String requestLineSeparator = " ";
-        int indexOfUriInRequestLine = 1;
-        String[] requestLineArray = requestLine.split(requestLineSeparator);
-        String URI = requestLineArray[indexOfUriInRequestLine];
-        String parameterSeparator = "?";
-        String parameterSeparatorPattern= "\\?";
-        String multipleParameterSeparator = "&";
-        String keyValueSeparator = "=";
 
-        Boolean hasQuery = URI.contains(parameterSeparator);
+        String[] requestLineArray = requestLine.split(REQUEST_LINE_SEPARATOR);
+        String URI = requestLineArray[INDEX_OF_URI_IN_REQUEST_LINE];
+
+        Boolean hasQuery = URI.contains(PARAMETER_SEPARATOR);
 
         if (hasQuery) {
-            String[] URIArray = URI.split(parameterSeparatorPattern);
-            String[] parameters = URIArray[1].split(multipleParameterSeparator);
+            String[] URIArray = URI.split(PARAMETER_SEPARATOR_PATTERN);
+            String[] parameters = URIArray[1].split(MULTIPLE_PARAMETER_SEPARATOR);
 
             for (String parameter : parameters) {
                 int keyIndex = 0;
@@ -112,7 +110,7 @@ public class HTTPParser {
                 String emptyValue = "";
                 String encoding = "UTF-8";
 
-                String [] keyValueArray = parameter.split(keyValueSeparator);
+                String [] keyValueArray = parameter.split(KEY_VALUE_SEPARATOR);
 
                 if (parameterOnlyHasKey(keyValueArray)){
                     parametersHash.put(URLDecoder.decode(keyValueArray[keyIndex], encoding), emptyValue);
@@ -127,7 +125,8 @@ public class HTTPParser {
     }
 
     private Boolean parameterOnlyHasKey(String[] parameter) {
-        if (parameter.length == 2) return false;
+        int numberOfElementsInArrayWithKeyAndValue = 2;
+        if (parameter.length == numberOfElementsInArrayWithKeyAndValue) return false;
 
         return true;
     }

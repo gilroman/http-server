@@ -88,7 +88,7 @@ public class RouterTest {
         HashMap<String, String> expectedParameters = new HashMap<>();
         expectedParameters.put("hobby", "surfing");
         request.setMethod("GET");
-        request.setURI("/");
+        request.setURI("/api/parameters");
         request.setParameters(expectedParameters);
         request.setHttpVersion("HTTP/1.1");
 

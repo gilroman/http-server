@@ -13,9 +13,9 @@ Feature: Server returns the right responses
     Then I get an HTTP response with status code 404
 
   Scenario: Server can process a GET request with a single query parameter
-    When I send a GET request with a single query to "/?name=lula"
+    When I send a GET request with a single query to "/api/parameters?name=lula"
     Then I get an HTTP response with a message body containing "name=lula"
 
   Scenario: Server can process a GET request with a multiple query parameter
-    When I send a GET request with multiple query parameters to "/?name=lula&species=cat"
+    When I send a GET request with multiple query parameters to "/api/parameters?name=lula&species=cat"
     Then I get an HTTP response with a message body containing "name=lula" and "species=cat"

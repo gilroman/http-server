@@ -6,5 +6,6 @@ public class Routes {
     public void addRoutes(Router router) {
         router.get(ROUTE_NOT_FOUND, RouteNotFoundController.get);
         router.get("/", RootEndpointController.get);
+        router.get("/api/parameters", ParametersController.get);
     }
 }

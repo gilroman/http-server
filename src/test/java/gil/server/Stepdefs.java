@@ -18,7 +18,7 @@ public class Stepdefs {
     int port = 4040;
 
     @When("^I send a simple GET request$")
-    public void i_send_a_simple_get_request() throws IOException {
+    public void iSendASimpleGetRequest() throws IOException {
         URL url = new URL(requestProtocol, localhost, port, "/");
         requestConnection = (HttpURLConnection) url.openConnection();
         requestConnection.setRequestMethod("GET");
@@ -26,7 +26,7 @@ public class Stepdefs {
     }
 
     @Then("I get a response of {string}")
-    public void i_get_a_response_of(String string) throws IOException {
+    public void iGetAResponseOf(String string) throws IOException {
         String response;
         BufferedReader in = new BufferedReader(new InputStreamReader(
                 requestConnection.getInputStream()));
@@ -36,7 +36,7 @@ public class Stepdefs {
     }
 
     @When("I send a simple GET request to {string}")
-    public void i_send_a_simple_GET_request_to(String endpoint) throws IOException {
+    public void iSendASimpleGETRequestTo(String endpoint) throws IOException {
         URL url = new URL(requestProtocol, localhost, port, endpoint);
         requestConnection = (HttpURLConnection) url.openConnection();
         requestConnection.setRequestMethod("GET");
@@ -44,14 +44,14 @@ public class Stepdefs {
     }
 
     @Then("I get an HTTP response with status code {int}")
-    public void i_get_an_HTTP_response_with_status_code(int code) throws IOException {
+    public void iGetAnHTTPResponseWithStatusCode(int code) throws IOException {
         int statusCode = requestConnection.getResponseCode();
         requestConnection.disconnect();
         assertEquals(code, statusCode);
     }
 
     @When("I send a GET request with a single query to {string}")
-    public void i_send_a_GET_request_with_a_single_query_to(String endpoint) throws IOException {
+    public void iSendGETRequestWithASingleQueryTo(String endpoint) throws IOException {
         URL url = new URL(requestProtocol, localhost, port, endpoint);
         requestConnection = (HttpURLConnection) url.openConnection();
         requestConnection.setRequestMethod("GET");
@@ -59,7 +59,7 @@ public class Stepdefs {
     }
 
     @Then("I get an HTTP response with a message body containing {string}")
-    public void i_get_an_HTTP_response_with_a_message_body_of(String parameters) throws IOException {
+    public void iGetAnHTTPResponseWithAMessageBodyOf(String parameters) throws IOException {
         String response;
         BufferedReader in = new BufferedReader(new InputStreamReader(
                 requestConnection.getInputStream()));
@@ -69,7 +69,7 @@ public class Stepdefs {
     }
 
     @When("I send a GET request with multiple query parameters to {string}")
-    public void i_send_a_GET_request_with_multiple_query_parameters_to(String endpoint) throws IOException {
+    public void iSendAGETRequestWithMultipleQueryParametersTo(String endpoint) throws IOException {
         URL url = new URL(requestProtocol, localhost, port, endpoint);
         requestConnection = (HttpURLConnection) url.openConnection();
         requestConnection.setRequestMethod("GET");
@@ -77,7 +77,7 @@ public class Stepdefs {
     }
 
     @Then("I get an HTTP response with a message body containing {string} and {string}")
-    public void i_get_an_HTTP_response_with_a_message_body_of(String parameter1, String parameter2) throws IOException {
+    public void iGetAHTTPResponseWithAMessageBodyOf(String parameter1, String parameter2) throws IOException {
         String response;
         BufferedReader in = new BufferedReader(new InputStreamReader(
                 requestConnection.getInputStream()));

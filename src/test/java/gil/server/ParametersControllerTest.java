@@ -6,8 +6,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import static org.junit.Assert.assertTrue;
 
-public class ParametersMiddlewareTest {
-    ParametersMiddleware parametersMiddleware = new ParametersMiddleware();
+public class ParametersControllerTest {
+    ParametersController parametersController = new ParametersController();
 
     @Test
     public void shouldReceiveARequestWithParametersAndAddThemToTheBodyOfTheResponse() throws UnsupportedEncodingException {
@@ -15,11 +15,14 @@ public class ParametersMiddlewareTest {
         Response response = new Response();
         HashMap<String, String> expectedParameters = new HashMap<>();
         expectedParameters.put("hobby", "surfing");
-        response.setBody("");
+        request.setHttpVersion("HTTP/1.1");
+        request.setMethod("GET");
+        request.setURI("/");
         request.setParameters(expectedParameters);
 
-        Response newResponse = parametersMiddleware.use.apply(request, response);
-        String newResponseBody = newResponse.getBody();
-        assertTrue(newResponseBody.contains(expectedParameters.toString()));
+        parametersController.get.apply(request, response);
+        String responseBody = response.getBody();
+
+        assertTrue(responseBody.contains(expectedParameters.toString()));
     }
 }
