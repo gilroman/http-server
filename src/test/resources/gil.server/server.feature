@@ -19,3 +19,7 @@ Feature: Server returns the right responses
   Scenario: Server can process a GET request with a multiple query parameter
     When I send a GET request with multiple query parameters to "/api/parameters?name=lula&species=cat"
     Then I get an HTTP response with a message body containing "name=lula" and "species=cat"
+
+  Scenario: Server can access a file inside a public folder
+    When I send a simple GET request to "/file%20with%20space.txt"
+    Then I get an HTTP response with a message body containing "The title of this text file has spaces."

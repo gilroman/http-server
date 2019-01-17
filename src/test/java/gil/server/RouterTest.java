@@ -3,7 +3,6 @@ package gil.server;
 import org.junit.Test;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -82,7 +81,7 @@ public class RouterTest {
     }
 
     @Test
-    public void shouldApplyTheParametersMiddleware() {
+    public void shouldCallTheParameterController() {
         Router router = new Router();
         Request request = new Request();
         HashMap<String, String> expectedParameters = new HashMap<>();
@@ -95,6 +94,21 @@ public class RouterTest {
         Response response = router.route(request);
         String responseBody = response.getBody();
 
-       assertTrue(responseBody.contains("hobby=surfing"));
+        assertTrue(responseBody.contains("hobby=surfing"));
+    }
+
+    @Test
+    public void shouldCallTheStaticFileHandler() {
+        Router router = new Router();
+        Request request = new Request();
+        request.setMethod("GET");
+        request.setHttpVersion("HTTP/1.1");
+        request.setURI("/file%20with%20space.txt");
+
+        Response response = router.route(request);
+        assertEquals("HTTP/1.1", response.getProtocol());
+        assertEquals("200", response.getStatusCode());
+        assertEquals("OK", response.getReasonPhrase());
+        assertEquals("The title of this text file has spaces.", response.getBody());
     }
 }
