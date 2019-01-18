@@ -43,11 +43,13 @@ public class ServerSocketWrapper implements ServerSocketWrapperInterface {
     private void sendResponse(PrintWriter output, Response response) {
         String body = response.getBody();
         String contentLength = response.getContentLength();
+        String allow = response.getAllow();
 
         output.println(response.getStartLine());
         output.println(response.getDate());
         output.println(response.getContentType());
         output.println(contentLength);
+        if (allow != null ) output.println(allow);
         output.println();
         if (body != null) output.println(response.getBody());
     }

@@ -7,6 +7,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -85,4 +88,20 @@ public class Stepdefs {
         requestConnection.disconnect();
         assertTrue(response.contains(parameter1) && response.contains(parameter2));
     }
+
+    @When("I send an OPTIONS request to {string}")
+    public void iSendAnOPTIONSRequestTo(String endpoint) throws IOException {
+        URL url = new URL(requestProtocol, localhost, port, endpoint);
+        requestConnection = (HttpURLConnection) url.openConnection();
+        requestConnection.setRequestMethod("OPTIONS");
+        requestConnection.connect();
+    }
+
+    @Then("I get an HTTP response with an Allow header field of {string}")
+    public void iGetAnHTTPResponseWithAnAllowHeaderFieldOf(String header) {
+        Map<String, List<String>> headerFields = requestConnection.getHeaderFields();
+        requestConnection.disconnect();
+        assertTrue(headerFields.get("Allow").contains(header));
+    }
+
 }

@@ -18,6 +18,7 @@ public class Response {
     private String protocol;
     private String reasonPhrase;
     private String statusCode;
+    private String allow;
 
     public Response() {
         setDate();
@@ -37,6 +38,14 @@ public class Response {
 
     public String getDate() {
         return date;
+    }
+
+    public String getAllow() {
+        return this.allow;
+    }
+
+    public void setAllow(String allow) {
+        this.allow = allow;
     }
 
     public String getProtocol() {

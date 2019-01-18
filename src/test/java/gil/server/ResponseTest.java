@@ -98,4 +98,14 @@ public class ResponseTest {
 
         assertTrue(contentLength.contains("Content-Length:"));
     }
+
+    @Test
+    public void shouldSetAllowHeaderField() {
+        Response response = new Response();
+        String expectedAllowHeader = "Allow: OPTIONS, GET";
+
+        response.setAllow(expectedAllowHeader);
+
+        assertEquals(expectedAllowHeader, response.getAllow());
+    }
 }
