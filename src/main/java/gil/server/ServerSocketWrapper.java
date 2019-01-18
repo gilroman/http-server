@@ -44,8 +44,6 @@ public class ServerSocketWrapper implements ServerSocketWrapperInterface {
         String body = response.getBody();
         String contentLength = response.getContentLength();
 
-        System.out.println("the content length is: " + contentLength);
-
         output.println(response.getStartLine());
         output.println(response.getDate());
         output.println(response.getContentType());

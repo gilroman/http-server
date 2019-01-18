@@ -7,7 +7,7 @@ public class RootEndpointControllerTest {
     RootEndpointController rootEndpointController = new RootEndpointController();
 
     @Test
-    public void getShouldResultInResponseWith404Status() {
+    public void getShouldResultInResponseWith200Status() {
         Request request = new Request();
         Response response = new Response();
         request.setHttpVersion("HTTP/1.1");

@@ -7,6 +7,7 @@ public class Router {
     private HashMap<String, BiFunction<Request, Response, Response>> get = new HashMap();
     private final String ROUTE_NOT_FOUND = "route-not-found";
     private enum METHOD {GET}
+    ParametersController parametersMiddleware = new ParametersController();
 
     public Router() {
         Routes routes = new Routes();

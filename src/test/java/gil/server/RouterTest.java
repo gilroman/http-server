@@ -2,7 +2,10 @@ package gil.server;
 
 import org.junit.Test;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class RouterTest {
 
@@ -10,9 +13,11 @@ public class RouterTest {
     public void shouldAllowSettingAnEndpointForGetMethod() {
         Router router = new Router();
         Request request = new Request();
+        HashMap<String, String> emptyParameters = new HashMap();
         request.setURI("/");
         request.setHttpVersion("HTTP/1.1");
         request.setMethod("GET");
+        request.setParameters(emptyParameters);
         router.get("/", (Request req, Response res) -> {
             res.setProtocol("HTTP/1.1");
             res.setStatusCode("200");
@@ -31,9 +36,11 @@ public class RouterTest {
     public void shouldCallTheControllerFunctionOfAnEndpoint() {
         Router router = new Router();
         Request request = new Request();
+        HashMap<String, String> emptyParameters = new HashMap();
         request.setURI("/");
         request.setHttpVersion("HTTP/1.1");
         request.setMethod("GET");
+        request.setParameters(emptyParameters);
         router.get("/", (Request req, Response res) -> {
             res.setProtocol("HTTP/1.1");
             res.setStatusCode("200");
@@ -49,25 +56,45 @@ public class RouterTest {
         });
 
         Response response = router.route(request);
+        String responseBody = response.getBody();
 
         assertEquals("HTTP/1.1", response.getProtocol());
         assertEquals("200", response.getStatusCode());
         assertEquals("OK", response.getReasonPhrase());
-        assertEquals("Hello, World", response.getBody());
+        assertTrue(responseBody.contains("Hello, World"));
     }
 
     @Test
     public void shouldCallRouteNotFoundControllerWhenRouteDoesNotExist() {
         Router router = new Router();
         Request request = new Request();
+        HashMap<String, String> emptyParameters = new HashMap();
         request.setURI("/fake-endpoint");
         request.setHttpVersion("HTTP/1.1");
         request.setMethod("GET");
+        request.setParameters(emptyParameters);
 
         Response response = router.route(request);
 
         assertEquals("HTTP/1.1", response.getProtocol());
         assertEquals("404", response.getStatusCode());
         assertEquals("Not Found", response.getReasonPhrase());
+    }
+
+    @Test
+    public void shouldApplyTheParametersMiddleware() {
+        Router router = new Router();
+        Request request = new Request();
+        HashMap<String, String> expectedParameters = new HashMap<>();
+        expectedParameters.put("hobby", "surfing");
+        request.setMethod("GET");
+        request.setURI("/api/parameters");
+        request.setParameters(expectedParameters);
+        request.setHttpVersion("HTTP/1.1");
+
+        Response response = router.route(request);
+        String responseBody = response.getBody();
+
+       assertTrue(responseBody.contains("hobby=surfing"));
     }
 }
