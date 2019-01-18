@@ -5,8 +5,8 @@ import java.util.function.BiFunction;
 
 public class Router {
     private HashMap<String, BiFunction<Request, Response, Response>> get = new HashMap<>();
-    private final String ROUTE_NOT_FOUND = "route-not-found";
-    private enum METHOD {GET};
+    private HashMap<String, BiFunction<Request, Response, Response>> options = new HashMap<>();
+    private enum METHOD {GET, OPTIONS};
 
     public Router() {
         Routes routes = new Routes();
@@ -17,12 +17,18 @@ public class Router {
         get.put(route, controller);
     }
 
+    public void options(String route, BiFunction<Request, Response, Response> controller) {
+        options.put(route, controller);
+    }
+
     private HashMap<String, BiFunction<Request, Response, Response>> getMapForMethod(String methodName) {
         String method = methodName.toUpperCase();
 
         switch (METHOD.valueOf(method)) {
             case GET:
                 return this.get;
+            case OPTIONS:
+                return this.options;
         }
 
         return null;
@@ -39,16 +45,25 @@ public class Router {
 
     private BiFunction<Request, Response, Response> getController(Request request) {
         String requestMethod = request.getMethod();
+        String requestURI = request.getURI();
         HashMap<String, BiFunction<Request, Response, Response>> methodHash = getMapForMethod(requestMethod);
-        BiFunction<Request, Response, Response> controller = methodHash.get(ROUTE_NOT_FOUND);
+        BiFunction<Request, Response, Response> controller = this.get.get(Routes.ROUTE_NOT_FOUND);
 
-        if (StaticFileUtils.staticFileExists(request.getURI())) {
-            controller = StaticFileHandler.get;
-        }
+        switch(METHOD.valueOf(requestMethod)) {
+            case GET:
+                if (StaticFileUtils.staticFileExists(requestURI)) {
+                    controller = StaticFileHandler.get;
+                }
 
-        if (hasRoute(request)){
-            String requestURI = request.getURI();
-            controller = methodHash.get(requestURI);
+                if (hasRoute(request)) {
+                    controller = methodHash.get(requestURI);
+                }
+                break;
+            case OPTIONS:
+                controller = methodHash.get(Routes.STATIC_FILE_OPTIONS);
+                break;
+            default:
+                controller = this.get.get(Routes.ROUTE_NOT_FOUND);
         }
 
         return controller;

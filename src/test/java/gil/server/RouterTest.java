@@ -106,9 +106,27 @@ public class RouterTest {
         request.setURI("/file%20with%20space.txt");
 
         Response response = router.route(request);
+
         assertEquals("HTTP/1.1", response.getProtocol());
         assertEquals("200", response.getStatusCode());
         assertEquals("OK", response.getReasonPhrase());
         assertEquals("The title of this text file has spaces.", response.getBody());
     }
+
+   @Test
+   public void shouldCallTheStaticFileOptionsController() {
+       Router router = new Router();
+       Request request = new Request();
+       request.setMethod("OPTIONS");
+       request.setHttpVersion("HTTP/1.1");
+       request.setURI("/file%20with%20space.txt");
+       String expectedHeaderFields = "Allow: OPTIONS, GET";
+
+       Response response = router.route(request);
+
+       assertEquals("HTTP/1.1", response.getProtocol());
+       assertEquals("200", response.getStatusCode());
+       assertEquals("OK", response.getReasonPhrase());
+       assertEquals(expectedHeaderFields, response.getAllow());
+   }
 }
