@@ -15,7 +15,10 @@ public class HTTPParserTest {
             "Accept: text/html,application" + CRLF +
             "Accept-Encoding: gzip, deflate, br" + CRLF +
             CRLF +
-            "<!DOCTYPE=html>";
+            "{\n" +
+            "\t\"name\": \"lula\",\n" +
+            "\t\"email\": \"kitty@gmail.com\"\n" +
+            "}";
     private StringReader dataStream = new StringReader(data);
     private BufferedReader input = new BufferedReader(dataStream);
     private HTTPParser parser = new HTTPParser();
@@ -119,6 +122,18 @@ public class HTTPParserTest {
         headersHash.put("Connection".toLowerCase(), "keep-alive");
 
         assertEquals(headersHash, parser.getHeaders(headers));
+    }
+
+    @Test
+    public void shouldReturnTheBody() throws IOException {
+        String expectedBody = "{\n" +
+                "\t\"name\": \"lula\",\n" +
+                "\t\"email\": \"kitty@gmail.com\"\n" +
+                "}";
+
+        Request request = parser.parse(input);
+
+        assertEquals(expectedBody, request.getBody());
     }
 
     @Test(expected = HTTPInvalidRequestFormatException.class)

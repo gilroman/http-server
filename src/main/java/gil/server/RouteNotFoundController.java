@@ -1,6 +1,5 @@
 package gil.server;
 
-import java.io.UnsupportedEncodingException;
 import java.util.function.BiFunction;
 
 public class RouteNotFoundController {
@@ -10,11 +9,8 @@ public class RouteNotFoundController {
                 response.setStatusCode("404");
                 response.setReasonPhrase("Not Found");
                 response.setContentType("text/html; charset=UTF-8");
-                try {
-                    response.setBody("");
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
+                response.setBody("");
+
                 return response;
             };
 }

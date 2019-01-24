@@ -1,6 +1,5 @@
 package gil.server;
 
-import java.io.UnsupportedEncodingException;
 import java.util.function.BiFunction;
 
 public class StaticFileOptionsController {
@@ -15,11 +14,7 @@ public class StaticFileOptionsController {
                     response.setReasonPhrase("OK");
                     response.setContentType("text/html; charset=UTF-8");
                     response.setAllow(allow);
-                    try {
-                        response.setBody("");
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    }
+                    response.setBody("");
                 } else {
                     RouteNotFoundController.get.apply(request, response);
                 }

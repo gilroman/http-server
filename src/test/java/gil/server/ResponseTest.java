@@ -1,6 +1,5 @@
 package gil.server;
 
-import java.io.UnsupportedEncodingException;
 import org.junit.Test;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
@@ -50,7 +49,7 @@ public class ResponseTest {
     }
 
     @Test
-    public void shouldAllowSettingBody() throws UnsupportedEncodingException {
+    public void shouldAllowSettingBody() {
         Response response = new Response();
         String body = "Some amazing content...";
 
@@ -80,7 +79,7 @@ public class ResponseTest {
     }
 
     @Test
-    public void shouldAllowSettingABody() throws UnsupportedEncodingException {
+    public void shouldAllowSettingABody() {
         Response response = new Response();
         String body = "<!DOCTYPE html><html lang=\"en-us\"><head></head><body><h1>Hello, world!</h1></body></html>";
 
@@ -90,7 +89,7 @@ public class ResponseTest {
     }
 
     @Test
-    public void shouldHaveAContentLengthWhenGivenABody() throws UnsupportedEncodingException {
+    public void shouldHaveAContentLengthWhenGivenABody() {
         Response response = new Response();
         response.setBody("<!DOCTYPE html><html lang=\"en-us\"><head></head><body><h1>Hello, world!</h1></body></html>");
 
@@ -107,5 +106,15 @@ public class ResponseTest {
         response.setAllow(expectedAllowHeader);
 
         assertEquals(expectedAllowHeader, response.getAllow());
+    }
+
+    @Test
+    public void shouldSetLocationHeaderField() {
+        Response response = new Response();
+        String expectedLocationHeader = "Location: /api/people/1";
+
+        response.setLocation(expectedLocationHeader);
+
+        assertEquals(expectedLocationHeader, response.getLocation());
     }
 }

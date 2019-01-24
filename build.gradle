@@ -30,6 +30,9 @@ configurations {
 dependencies {
     // This dependency is found on compile classpath of this component and consumers.
     implementation 'com.google.guava:guava:26.0-jre'
+    implementation 'javax.json:javax.json-api:1.1.4'
+    implementation 'org.glassfish:javax.json:1.1.4'
+
 
     // Use JUnit test framework
     testImplementation 'junit:junit:4.12'

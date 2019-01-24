@@ -8,6 +8,7 @@ public class Routes {
         router.get(ROUTE_NOT_FOUND, RouteNotFoundController.get);
         router.get("/", RootEndpointController.get);
         router.get("/api/parameters", ParametersController.get);
+        router.post("/api/people", PostPersonController.post);
         router.options(STATIC_FILE_OPTIONS, StaticFileOptionsController.options);
     }
 }

@@ -1,7 +1,6 @@
 package gil.server;
 
 import org.junit.Test;
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -44,11 +43,7 @@ public class RouterTest {
             res.setProtocol("HTTP/1.1");
             res.setStatusCode("200");
             res.setReasonPhrase("OK");
-            try {
-                res.setBody("Hello, World");
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
+            res.setBody("Hello, World");
 
             return res;
 
@@ -129,4 +124,22 @@ public class RouterTest {
        assertEquals("OK", response.getReasonPhrase());
        assertEquals(expectedHeaderFields, response.getAllow());
    }
+
+    @Test
+    public void shouldCallThePostPersonController() {
+        Router router = new Router();
+        Request request = new Request();
+        request.setMethod("POST");
+        request.setHttpVersion("HTTP/1.1");
+        request.setURI("/api/people");
+        request.setBody("{\"name\": \"Gil\", \"email\": \"g@tdd.com\"}");
+        String expectedHeaderFields = "Location: /api/people/";
+
+        Response response = router.route(request);
+
+        assertEquals("HTTP/1.1", response.getProtocol());
+        assertEquals("201", response.getStatusCode());
+        assertEquals("Created", response.getReasonPhrase());
+        assertTrue(response.getLocation().contains(expectedHeaderFields));
+    }
 }

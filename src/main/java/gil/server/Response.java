@@ -1,6 +1,5 @@
 package gil.server;
 
-import java.io.UnsupportedEncodingException;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -10,7 +9,6 @@ public class Response {
     private String CONTENT_TYPE = "Content-Type: ";
     private String DATE = "Date: ";
     private String SPACE = " ";
-    private String UTF8 = "UTF-8";
     private String body;
     private String contentLength;
     private String contentType = "Content-Type: ";
@@ -19,9 +17,11 @@ public class Response {
     private String reasonPhrase;
     private String statusCode;
     private String allow;
+    private String location;
 
     public Response() {
         setDate();
+        setBody("");
     }
 
     public String getBody() {
@@ -41,12 +41,18 @@ public class Response {
     }
 
     public String getAllow() {
-        return this.allow;
+        return allow;
     }
 
     public void setAllow(String allow) {
         this.allow = allow;
     }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getLocation() { return location; }
 
     public String getProtocol() {
         return protocol;
@@ -64,14 +70,18 @@ public class Response {
         return statusCode;
     }
 
-    public void setBody(String body) throws UnsupportedEncodingException {
+    public void setBody(String body) {
         this.body = body;
         setContentLength(this.body);
     }
 
-    private void setContentLength (String body) throws UnsupportedEncodingException {
-        byte[] responseBytes = body.getBytes(UTF8);
-        this.contentLength = CONTENT_LENGTH + responseBytes.length;
+    private void setContentLength (String body) {
+        if (!body.isEmpty()) {
+            byte[] responseBytes = body.getBytes();
+            this.contentLength = CONTENT_LENGTH + responseBytes.length;
+        } else {
+            this.contentLength = CONTENT_LENGTH + 0;
+        }
     }
 
     public void setContentType (String body) {

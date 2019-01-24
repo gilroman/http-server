@@ -2,9 +2,12 @@ package gradle.cucumber;
 
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
@@ -103,5 +106,23 @@ public class Stepdefs {
         requestConnection.disconnect();
         assertTrue(headerFields.get("Allow").contains(header));
     }
+
+    @When("I send a POST request to {string}")
+    public void i_send_a_POST_request_to(String endpoint) throws IOException {
+        String jsonString = "{\"name\": \"Gil\", \"email\": \"g@tdd.com\"}";
+        URL url = new URL(requestProtocol, localhost, port, endpoint);
+        requestConnection = (HttpURLConnection) url.openConnection();
+        requestConnection.setDoOutput(true);
+        requestConnection.setRequestMethod("POST");
+        OutputStream outputStream = requestConnection.getOutputStream();
+        OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream, "UTF-8");
+        outputStreamWriter.write(jsonString);
+        outputStreamWriter.flush();
+        outputStreamWriter.close();
+        outputStream.close();
+
+        requestConnection.connect();
+    }
+
 
 }

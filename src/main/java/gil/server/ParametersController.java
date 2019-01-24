@@ -1,6 +1,5 @@
 package gil.server;
 
-import java.io.UnsupportedEncodingException;
 import java.util.function.BiFunction;
 
 public class ParametersController {
@@ -14,11 +13,7 @@ public class ParametersController {
                 response.setStatusCode("200");
                 response.setReasonPhrase("OK");
                 response.setContentType("text/html; charset=UTF-8");
-                try {
-                    response.setBody(body);
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
+                response.setBody(body);
 
                 return response;
             };

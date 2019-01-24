@@ -1,7 +1,6 @@
 package gil.server;
 
 import org.junit.Test;
-
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import static org.junit.Assert.assertTrue;
@@ -10,7 +9,7 @@ public class ParametersControllerTest {
     ParametersController parametersController = new ParametersController();
 
     @Test
-    public void shouldReceiveARequestWithParametersAndAddThemToTheBodyOfTheResponse() throws UnsupportedEncodingException {
+    public void shouldReceiveARequestWithParametersAndAddThemToTheBodyOfTheResponse() {
         Request request = new Request();
         Response response = new Response();
         HashMap<String, String> expectedParameters = new HashMap<>();

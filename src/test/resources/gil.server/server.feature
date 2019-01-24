@@ -27,3 +27,7 @@ Feature: Server returns the right responses
   Scenario: Server can respond to OPTIONS request to a file inside a public folder
     When I send an OPTIONS request to "/file%20with%20space.txt"
     Then I get an HTTP response with an Allow header field of "OPTIONS, GET"
+
+  Scenario: Server can handle a POST request to a an endpoint
+    When I send a POST request to "/api/people"
+    Then I get an HTTP response with status code 201

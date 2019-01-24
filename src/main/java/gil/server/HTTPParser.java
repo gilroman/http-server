@@ -11,6 +11,7 @@ public class HTTPParser {
     private final String COLON = ":";
     private final String CRLF = "\r\n";
     private final String FORWARD_SLASH = "/";
+    private final String BODY = "body";
     private final String HEADERS = "headers";
     private final int INDEX_OF_URI_IN_STARTLINE = 1;
     private final int INDEX_OF_URI_IN_REQUEST_LINE = 1;
@@ -136,6 +137,7 @@ public class HTTPParser {
         HashMap requestHash = connectionReader.readRequest(connectionInput);
         String requestLine = requestHash.get(REQUEST_LINE).toString();
         String headers = requestHash.get(HEADERS).toString();
+        String body = requestHash.get(BODY).toString();
         HashMap<String, String> parameters = getParameters(requestLine);
 
         request.setURI(getRequestURI(requestLine));
@@ -143,6 +145,7 @@ public class HTTPParser {
         request.setHttpVersion(getHttpProtocol(requestLine));
         request.setHeaderFields(getHeaders(headers));
         request.setParameters(parameters);
+        request.setBody(body);
 
         return request;
     }

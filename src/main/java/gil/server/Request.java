@@ -10,6 +10,10 @@ public class Request {
     private String method;
     private String URI;
 
+    public Request() {
+        setBody("");
+    }
+
     public String getBody() {
         return this.body;
     }
