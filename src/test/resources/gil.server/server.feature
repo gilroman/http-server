@@ -28,6 +28,10 @@ Feature: Server returns the right responses
     When I send an OPTIONS request to "/file%20with%20space.txt"
     Then I get an HTTP response with an Allow header field of "OPTIONS, GET"
 
-  Scenario: Server can handle a POST request to a an endpoint
+  Scenario: Server can handle a POST request to an endpoint
     When I send a POST request to "/api/people"
     Then I get an HTTP response with status code 201
+
+  Scenario: Server can handle a GET request to a dynamic endpoint
+    When I send a simple GET request to "/api/people/0"
+    Then I get an HTTP response with status code 200
