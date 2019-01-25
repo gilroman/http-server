@@ -35,3 +35,11 @@ Feature: Server returns the right responses
   Scenario: Server can handle a GET request to a dynamic endpoint
     When I send a simple GET request to "/api/people/0"
     Then I get an HTTP response with status code 200
+
+  Scenario: Server can respond to OPTIONS request to a static route
+    When I send an OPTIONS request to "/api/people"
+    Then I get an HTTP response with an Allow header field of "OPTIONS, POST"
+
+  Scenario: Server can respond to OPTIONS request to a dynamic route
+    When I send an OPTIONS request to "/api/people/0"
+    Then I get an HTTP response with an Allow header field of "OPTIONS, GET"

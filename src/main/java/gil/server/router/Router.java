@@ -4,12 +4,14 @@ import gil.server.controllers.StaticFileUtils;
 import gil.server.controllers.StaticFileHandler;
 import gil.server.http.Request;
 import gil.server.http.Response;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
-import java.util.HashMap;
-import java.util.Optional;
 import java.util.function.BiFunction;
-import java.util.Map;
 
 public class Router {
     private HashMap<String, BiFunction<Request, Response, Response>> get = new HashMap<>();
@@ -83,7 +85,12 @@ public class Router {
                 }
                 break;
             case OPTIONS:
-                controller = methodHash.get(Routes.STATIC_FILE_OPTIONS);
+                if (StaticFileUtils.staticFileExists(requestURI)) {
+                    controller = methodHash.get(Routes.STATIC_FILE_OPTIONS);
+                }
+                else {
+                    controller = methodHash.get(Routes.ROUTE_OPTIONS);
+                }
                 break;
             case POST:
                 controller = methodHash.get(requestURI);
@@ -111,5 +118,36 @@ public class Router {
         boolean isMatch = matcher.matches();
 
         return isMatch;
+    }
+
+    public String getOptions(Request request) {
+        String options = "OPTIONS";
+
+        List<HashMap<String, BiFunction<Request, Response, Response>>> methodHashes = new ArrayList<>();
+        methodHashes.add(this.get);
+        methodHashes.add(this.post);
+
+        Optional<String> getRoute = this.get.entrySet()
+                .stream()
+                .filter( entry -> routeMatches(request, entry.getKey()))
+                .map(Map.Entry::getKey)
+                .findFirst();
+
+        if (getRoute.isPresent()){
+            options = options.concat(", GET");
+        }
+
+        Optional<String> postRoute = this.post.entrySet()
+                .stream()
+                .filter( entry -> this.post.containsKey(request.getURI()))
+                .map(Map.Entry::getKey)
+                .findFirst();
+
+        if (postRoute.isPresent()){
+            options = options.concat(", POST");
+        }
+
+
+        return options;
     }
 }

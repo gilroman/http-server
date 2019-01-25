@@ -101,9 +101,10 @@ public class ResponseTest {
     @Test
     public void shouldSetAllowHeaderField() {
         Response response = new Response();
+        String allow = "OPTIONS, GET";
         String expectedAllowHeader = "Allow: OPTIONS, GET";
 
-        response.setAllow(expectedAllowHeader);
+        response.setAllow(allow);
 
         assertEquals(expectedAllowHeader, response.getAllow());
     }

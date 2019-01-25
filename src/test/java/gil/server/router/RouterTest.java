@@ -172,4 +172,47 @@ public class RouterTest {
         assertEquals("200", response.getStatusCode());
         assertEquals("OK", response.getReasonPhrase());
     }
+
+    @Test
+    public void shouldReturnNamesOfMethodsDynamicRouteIsRegisteredToHandle() {
+        Router router = new Router();
+        Request request = new Request();
+        request.setMethod("OPTIONS");
+        request.setHttpVersion("HTTP/1.1");
+        request.setURI("/api/people/0");
+
+        String options = router.getOptions(request);
+
+        assertEquals("OPTIONS, GET", options);
+    }
+
+    @Test
+    public void shouldReturnNamesOfMethodsStaticRouteIsRegisteredToHandle() {
+        Router router = new Router();
+        Request request = new Request();
+        request.setMethod("OPTIONS");
+        request.setHttpVersion("HTTP/1.1");
+        request.setURI("/api/people");
+
+        String options = router.getOptions(request);
+
+        assertEquals("OPTIONS, POST", options);
+    }
+
+    @Test
+    public void shouldCallTheRouteOptionsController() {
+        Router router = new Router();
+        Response response;
+        Request request = new Request();
+        request.setMethod("OPTIONS");
+        request.setHttpVersion("HTTP/1.1");
+        request.setURI("/api/people");
+
+        response = router.route(request);
+
+        assertEquals("HTTP/1.1", response.getProtocol());
+        assertEquals("200", response.getStatusCode());
+        assertEquals("OK", response.getReasonPhrase());
+        assertEquals("Allow: OPTIONS, POST", response.getAllow());
+    }
 }

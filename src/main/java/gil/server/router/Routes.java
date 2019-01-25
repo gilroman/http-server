@@ -12,6 +12,7 @@ public class Routes {
 
     public static final String ROUTE_NOT_FOUND = "route-not-found";
     public static final String STATIC_FILE_OPTIONS = "static-file-options";
+    public static final String ROUTE_OPTIONS = "route-options";
 
     public void addRoutes(Router router) {
         router.get(ROUTE_NOT_FOUND, RouteNotFoundController.get);
@@ -20,5 +21,6 @@ public class Routes {
         router.get("/api/people/[0-9]+", personController.get);
         router.post("/api/people", PostPersonController.post);
         router.options(STATIC_FILE_OPTIONS, StaticFileOptionsController.options);
+        router.options(ROUTE_OPTIONS, RouteOptionsController.options);
     }
 }

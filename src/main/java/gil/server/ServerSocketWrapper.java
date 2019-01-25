@@ -47,7 +47,6 @@ public class ServerSocketWrapper implements ServerSocketWrapperInterface {
         String contentLength = response.getContentLength();
         String allow = response.getAllow();
         String location = response.getLocation();
-
         output.println(response.getStartLine());
         output.println(response.getDate());
         output.println(response.getContentType());

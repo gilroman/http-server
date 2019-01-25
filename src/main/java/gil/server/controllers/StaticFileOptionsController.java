@@ -2,7 +2,6 @@ package gil.server.controllers;
 
 import gil.server.http.Request;
 import gil.server.http.Response;
-
 import java.util.function.BiFunction;
 
 public class StaticFileOptionsController {
@@ -11,7 +10,7 @@ public class StaticFileOptionsController {
                 String uri = request.getURI();
 
                 if(StaticFileUtils.staticFileExists(uri)) {
-                    String allow = "Allow: OPTIONS, GET";
+                    String allow = "OPTIONS, GET";
                     response.setProtocol("HTTP/1.1");
                     response.setStatusCode("200");
                     response.setReasonPhrase("OK");

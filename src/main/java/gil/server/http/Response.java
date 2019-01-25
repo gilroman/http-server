@@ -45,7 +45,7 @@ public class Response {
     }
 
     public void setAllow(String allow) {
-        this.allow = allow;
+        this.allow = "Allow: " + allow;
     }
 
     public void setLocation(String location) {
