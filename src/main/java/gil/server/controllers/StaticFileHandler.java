@@ -6,14 +6,18 @@ import gil.server.http.Response;
 import java.util.function.BiFunction;
 
 public class StaticFileHandler {
-    public static String STATIC_FILE_PATH = "public";
 
     public static BiFunction<Request, Response, Response> get =
             (request, response) -> {
                 String uri = request.getURI();
+                String body = "";
 
                 try {
-                    String body = StaticFileUtils.getFileContent(uri);
+                    switch(StaticFileUtils.getFileType(uri)) {
+                        case "TEXT":
+                            body = StaticFileUtils.getTextFileContent(uri);
+                            break;
+                    }
 
                     response.setProtocol("HTTP/1.1");
                     response.setStatusCode("200");

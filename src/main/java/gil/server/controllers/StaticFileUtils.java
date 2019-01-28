@@ -1,5 +1,7 @@
 package gil.server.controllers;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -21,7 +23,7 @@ public class StaticFileUtils {
     return URLDecoder.decode(STATIC_FILE_PATH.concat(filePath), StandardCharsets.UTF_8);
   }
 
-  public static String getFileContent(String filePath) throws IOException {
+  public static String getTextFileContent(String filePath) throws IOException {
     String decodedPath = decodePath(filePath);
     File file = new File(decodedPath);
 
@@ -33,5 +35,36 @@ public class StaticFileUtils {
     }
 
     return contentBuilder.toString();
+  }
+
+  public static String getFileType(String uri) {
+    Integer indexOfFileTypeDelimiter = uri.indexOf(".");
+    String fileExtension = uri.substring(indexOfFileTypeDelimiter);
+    String fileType;
+
+    switch(fileExtension){
+      case ".jpg":
+        fileType = "IMAGE";
+        break;
+      case ".txt":
+        fileType = "TEXT";
+        break;
+      default:
+        fileType = "UNKNOWN";
+    }
+
+    return fileType;
+  }
+
+  public static String getImageFileContent(String filePath) throws IOException {
+    String decodedPath = decodePath(filePath);
+
+    BufferedImage image = null;
+    try {
+      image = ImageIO.read(new File(decodedPath));
+    } catch (IOException e) {
+    }
+
+    return image.toString();
   }
 }

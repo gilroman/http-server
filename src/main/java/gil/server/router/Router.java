@@ -52,7 +52,6 @@ public class Router {
     }
 
     public Optional<BiFunction<Request, Response, Response>> getRouteController(Request request) {
-        String endpoint = request.getURI();
         String method = request.getMethod().toLowerCase();
 
         HashMap<String, BiFunction<Request, Response, Response>> methodHash = getMapForMethod(method);
@@ -86,10 +85,10 @@ public class Router {
                 break;
             case OPTIONS:
                 if (StaticFileUtils.staticFileExists(requestURI)) {
-                    controller = methodHash.get(Routes.STATIC_FILE_OPTIONS);
+                    controller = methodHash.get(Routes.STATIC_FILE_OPTIONS); // assign controller directly here
                 }
                 else {
-                    controller = methodHash.get(Routes.ROUTE_OPTIONS);
+                    controller = methodHash.get(Routes.ROUTE_OPTIONS); // assign controller directly here
                 }
                 break;
             case POST:
@@ -122,10 +121,6 @@ public class Router {
 
     public String getOptions(Request request) {
         String options = "OPTIONS";
-
-        List<HashMap<String, BiFunction<Request, Response, Response>>> methodHashes = new ArrayList<>();
-        methodHashes.add(this.get);
-        methodHashes.add(this.post);
 
         Optional<String> getRoute = this.get.entrySet()
                 .stream()
