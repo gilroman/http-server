@@ -5,8 +5,7 @@ import java.util.function.BiFunction;
 
 public class Router {
     private HashMap<String, BiFunction<Request, Response, Response>> get = new HashMap<>();
-    private final String ROUTE_NOT_FOUND = "route-not-found";
-    private enum METHOD {GET};
+    private enum METHOD {GET, OPTIONS};
 
     public Router() {
         Routes routes = new Routes();
@@ -39,16 +38,25 @@ public class Router {
 
     private BiFunction<Request, Response, Response> getController(Request request) {
         String requestMethod = request.getMethod();
+        String requestURI = request.getURI();
         HashMap<String, BiFunction<Request, Response, Response>> methodHash = getMapForMethod(requestMethod);
-        BiFunction<Request, Response, Response> controller = methodHash.get(ROUTE_NOT_FOUND);
+        BiFunction<Request, Response, Response> controller = RouteNotFoundController.get;
 
-        if (StaticFileUtils.staticFileExists(request.getURI())) {
-            controller = StaticFileHandler.get;
-        }
+        switch(METHOD.valueOf(requestMethod)) {
+            case GET:
+                if (StaticFileUtils.staticFileExists(requestURI)) {
+                    controller = StaticFileHandler.get;
+                }
 
-        if (hasRoute(request)){
-            String requestURI = request.getURI();
-            controller = methodHash.get(requestURI);
+                if (hasRoute(request)) {
+                    controller = methodHash.get(requestURI);
+                }
+                break;
+            case OPTIONS:
+                controller = StaticFileOptionsController.options;
+                break;
+            default:
+                controller = RouteNotFoundController.get;
         }
 
         return controller;

@@ -19,21 +19,19 @@ public class RequestTest {
     @Test
     public void shouldAllowSettingTheMethod() {
         Request request = new Request();
-        String method = "GET";
 
-        request.setMethod(method);
+        request.setMethod(HTTPProtocol.GET);
 
-        assertEquals(method, request.getMethod());
+        assertEquals(HTTPProtocol.GET, request.getMethod());
     }
 
     @Test
     public void shouldAllowSettingTheHTTPVersion() {
         Request request = new Request();
-        String HTTPVersion = "1.1";
 
-        request.setHttpVersion(HTTPVersion);
+        request.setHttpVersion(HTTPProtocol.HTTP_VERSION);
 
-        assertEquals(HTTPVersion, request.getHTTPVersion());
+        assertEquals(HTTPProtocol.HTTP_VERSION, request.getHTTPVersion());
     }
 
     @Test

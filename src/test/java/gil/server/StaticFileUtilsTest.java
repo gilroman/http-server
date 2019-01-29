@@ -14,7 +14,7 @@ public class StaticFileUtilsTest {
 
     @Test
     public void shouldObtainStaticFileContent() throws IOException {
-        String expectedContent = "The title of this text file has spaces.";
+        String expectedContent = "This is a test file.";
         String content = StaticFileUtils.getFileContent("test.txt");
 
         assertEquals(expectedContent, content);

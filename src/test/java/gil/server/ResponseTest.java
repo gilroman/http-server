@@ -1,6 +1,5 @@
 package gil.server;
 
-import java.io.UnsupportedEncodingException;
 import org.junit.Test;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
@@ -50,7 +49,7 @@ public class ResponseTest {
     }
 
     @Test
-    public void shouldAllowSettingBody() throws UnsupportedEncodingException {
+    public void shouldAllowSettingBody() {
         Response response = new Response();
         String body = "Some amazing content...";
 
@@ -63,24 +62,13 @@ public class ResponseTest {
     public void shouldHaveADateHeader() {
         Response response = new Response();
 
-        String date = response.getDate();
+        String headers = response.getHeaders();
 
-        assertTrue(date.contains("Date"));
+        assertTrue(headers.contains("Date"));
     }
 
     @Test
-    public void shouldAllowSettingContentType() {
-        Response response = new Response();
-        String contentType = "text/html; charset=UTF-8";
-        String expectedContentType = "Content-Type: text/html; charset=UTF-8";
-
-        response.setContentType(contentType);
-
-        assertEquals(expectedContentType, response.getContentType());
-    }
-
-    @Test
-    public void shouldAllowSettingABody() throws UnsupportedEncodingException {
+    public void shouldAllowSettingABody() {
         Response response = new Response();
         String body = "<!DOCTYPE html><html lang=\"en-us\"><head></head><body><h1>Hello, world!</h1></body></html>";
 
@@ -90,12 +78,38 @@ public class ResponseTest {
     }
 
     @Test
-    public void shouldHaveAContentLengthWhenGivenABody() throws UnsupportedEncodingException {
+    public void shouldHaveAContentLengthWhenGivenABody() {
         Response response = new Response();
         response.setBody("<!DOCTYPE html><html lang=\"en-us\"><head></head><body><h1>Hello, world!</h1></body></html>");
 
-        String contentLength = response.getContentLength();
+        String headers = response.getHeaders();
 
-        assertTrue(contentLength.contains("Content-Length:"));
+        assertTrue(headers.contains("Content-Length:"));
+    }
+
+    @Test
+    public void shouldSetAHeaderField() {
+        Response response = new Response();
+        response.setProtocol(HTTPProtocol.PROTOCOL);
+        response.setStatusCode(HTTPProtocol.STATUS_CODE_200);
+        response.setReasonPhrase(HTTPProtocol.REASON_PHRASE_OK);
+        String allowHeaderValue = "OPTIONS, GET";
+
+        response.addHeader(HTTPProtocol.ALLOW, allowHeaderValue);
+
+        assertTrue(response.getHeaders().contains(allowHeaderValue));
+    }
+
+    @Test
+    public void shouldSetTwoHeaderFields() {
+        Response response = new Response();
+        String allowHeaderValue = "OPTIONS, GET";
+        String contentTypeHeaderValue = "\"text/html; charset=UTF-8\"";
+
+        response.addHeader(HTTPProtocol.ALLOW, allowHeaderValue);
+        response.addHeader(HTTPProtocol.CONTENT_TYPE, contentTypeHeaderValue);
+
+        assertTrue(response.getHeaders().contains(allowHeaderValue));
+        assertTrue(response.getHeaders().contains(contentTypeHeaderValue));
     }
 }

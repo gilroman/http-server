@@ -1,6 +1,6 @@
 package gil.server;
 
-import java.io.UnsupportedEncodingException;
+
 import java.util.function.BiFunction;
 
 public class ParametersController {
@@ -10,15 +10,11 @@ public class ParametersController {
                 int lengthOfStringWithNoParameters = 2;
                 Boolean requestHasParameters = responseParameters.length() > lengthOfStringWithNoParameters;
                 String body = requestHasParameters ? responseParameters : "";
-                response.setProtocol("HTTP/1.1");
-                response.setStatusCode("200");
-                response.setReasonPhrase("OK");
-                response.setContentType("text/html; charset=UTF-8");
-                try {
-                    response.setBody(body);
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
+                response.setProtocol(HTTPProtocol.PROTOCOL);
+                response.setStatusCode(HTTPProtocol.STATUS_CODE_200);
+                response.setReasonPhrase(HTTPProtocol.REASON_PHRASE_OK);
+                response.addHeader(HTTPProtocol.CONTENT_TYPE,"text/html; charset=UTF-8");
+                response.setBody(body);
 
                 return response;
             };
