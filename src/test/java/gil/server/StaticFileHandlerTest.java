@@ -10,29 +10,29 @@ public class StaticFileHandlerTest {
     public void shouldReturnAResponseOfStatus200IfFileExists() {
         Request request = new Request();
         Response response = new Response();
-        request.setMethod("GET");
-        request.setHttpVersion("HTTP/1.1");
+        request.setMethod(HTTPProtocol.GET);
+        request.setHttpVersion(HTTPProtocol.PROTOCOL);
         request.setURI("/test.txt");
 
         staticFileHandler.get.apply(request, response);
 
-        assertEquals("HTTP/1.1", response.getProtocol());
-        assertEquals("200", response.getStatusCode());
-        assertEquals("OK", response.getReasonPhrase());
+        assertEquals(HTTPProtocol.PROTOCOL, response.getProtocol());
+        assertEquals(HTTPProtocol.STATUS_CODE_200, response.getStatusCode());
+        assertEquals(HTTPProtocol.REASON_PHRASE_OK, response.getReasonPhrase());
     }
 
     @Test
     public void shouldReturnAResponseOfStatus404IfFileDoesNotExist() {
         Request request = new Request();
         Response response = new Response();
-        request.setMethod("GET");
-        request.setHttpVersion("HTTP/1.1");
+        request.setMethod(HTTPProtocol.GET);
+        request.setHttpVersion(HTTPProtocol.PROTOCOL);
         request.setURI("/mysteryfile.txt");
 
         staticFileHandler.get.apply(request, response);
 
-        assertEquals("HTTP/1.1", response.getProtocol());
-        assertEquals("404", response.getStatusCode());
-        assertEquals("Not Found", response.getReasonPhrase());
+        assertEquals(HTTPProtocol.PROTOCOL, response.getProtocol());
+        assertEquals(HTTPProtocol.STATUS_CODE_404, response.getStatusCode());
+        assertEquals(HTTPProtocol.REASON_PHRASE_NOT_FOUND, response.getReasonPhrase());
     }
 }

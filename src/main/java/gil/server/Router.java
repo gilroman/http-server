@@ -5,7 +5,6 @@ import java.util.function.BiFunction;
 
 public class Router {
     private HashMap<String, BiFunction<Request, Response, Response>> get = new HashMap<>();
-    private HashMap<String, BiFunction<Request, Response, Response>> options = new HashMap<>();
     private enum METHOD {GET, OPTIONS};
 
     public Router() {
@@ -17,18 +16,12 @@ public class Router {
         get.put(route, controller);
     }
 
-    public void options(String route, BiFunction<Request, Response, Response> controller) {
-        options.put(route, controller);
-    }
-
     private HashMap<String, BiFunction<Request, Response, Response>> getMapForMethod(String methodName) {
         String method = methodName.toUpperCase();
 
         switch (METHOD.valueOf(method)) {
             case GET:
                 return this.get;
-            case OPTIONS:
-                return this.options;
         }
 
         return null;
@@ -47,7 +40,7 @@ public class Router {
         String requestMethod = request.getMethod();
         String requestURI = request.getURI();
         HashMap<String, BiFunction<Request, Response, Response>> methodHash = getMapForMethod(requestMethod);
-        BiFunction<Request, Response, Response> controller = this.get.get(Routes.ROUTE_NOT_FOUND);
+        BiFunction<Request, Response, Response> controller = RouteNotFoundController.get;
 
         switch(METHOD.valueOf(requestMethod)) {
             case GET:
@@ -60,10 +53,10 @@ public class Router {
                 }
                 break;
             case OPTIONS:
-                controller = methodHash.get(Routes.STATIC_FILE_OPTIONS);
+                controller = StaticFileOptionsController.options;
                 break;
             default:
-                controller = this.get.get(Routes.ROUTE_NOT_FOUND);
+                controller = RouteNotFoundController.get;
         }
 
         return controller;

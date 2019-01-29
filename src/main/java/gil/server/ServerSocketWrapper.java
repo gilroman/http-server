@@ -41,17 +41,14 @@ public class ServerSocketWrapper implements ServerSocketWrapperInterface {
     }
 
     private void sendResponse(PrintWriter output, Response response) {
+        String startLine = response.getStartLine();
+        String headers = response.getHeaders();
         String body = response.getBody();
-        String contentLength = response.getContentLength();
-        String allow = response.getAllow();
 
-        output.println(response.getStartLine());
-        output.println(response.getDate());
-        output.println(response.getContentType());
-        output.println(contentLength);
-        if (allow != null ) output.println(allow);
+        output.println(startLine);
+        output.print(headers);
         output.println();
-        if (body != null) output.println(response.getBody());
+        if (body != null) output.println(body);
     }
 
     public void close() throws Exception {

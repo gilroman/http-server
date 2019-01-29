@@ -1,51 +1,38 @@
 package gil.server;
 
-import java.io.UnsupportedEncodingException;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Response {
-    private String CONTENT_LENGTH = "Content-Length: ";
-    private String CONTENT_TYPE = "Content-Type: ";
-    private String DATE = "Date: ";
     private String SPACE = " ";
-    private String UTF8 = "UTF-8";
+    private String headerKeyValueSeparator = ": ";
     private String body;
-    private String contentLength;
-    private String contentType = "Content-Type: ";
-    private String date;
+    private HashMap<String, String> headerFields;
     private String protocol;
     private String reasonPhrase;
     private String statusCode;
-    private String allow;
 
     public Response() {
+        headerFields = new HashMap<>();
         setDate();
+        setBody("");
     }
 
     public String getBody() {
         return body;
     }
 
-    public String getContentType() {
-        return contentType;
-    }
+    public String getHeaders() {
+        StringBuilder headers = new StringBuilder();
 
-    public String getContentLength() {
-        return contentLength;
-    }
+        for(Map.Entry<String, String> header : this.headerFields.entrySet()) {
+            headers.append(header.getKey() + headerKeyValueSeparator + header.getValue() + HTTPProtocol.CRLF);
+        }
 
-    public String getDate() {
-        return date;
-    }
-
-    public String getAllow() {
-        return this.allow;
-    }
-
-    public void setAllow(String allow) {
-        this.allow = allow;
+        return headers.toString();
     }
 
     public String getProtocol() {
@@ -64,24 +51,24 @@ public class Response {
         return statusCode;
     }
 
-    public void setBody(String body) throws UnsupportedEncodingException {
+    public void setBody(String body) {
         this.body = body;
         setContentLength(this.body);
     }
 
-    private void setContentLength (String body) throws UnsupportedEncodingException {
-        byte[] responseBytes = body.getBytes(UTF8);
-        this.contentLength = CONTENT_LENGTH + responseBytes.length;
-    }
-
-    public void setContentType (String body) {
-        this.contentType = CONTENT_TYPE + body;
+    private void setContentLength (String body) {
+        byte[] responseBytes = body.getBytes();
+        this.headerFields.put(HTTPProtocol.CONTENT_LENGTH, String.valueOf(responseBytes.length));
     }
 
     private void setDate() {
         ZonedDateTime currentUTCDateTime = ZonedDateTime.now(ZoneOffset.UTC);
         String RFC1123FormattedDate = DateTimeFormatter.RFC_1123_DATE_TIME.format(currentUTCDateTime);
-        this.date = DATE + RFC1123FormattedDate;
+        this.headerFields.put(HTTPProtocol.DATE, RFC1123FormattedDate);
+    }
+
+    public void addHeader(String headerName, String headerValue) {
+        this.headerFields.put(headerName, headerValue);
     }
 
     public void setProtocol(String protocol) {
