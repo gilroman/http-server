@@ -1,7 +1,6 @@
 package gil.server;
 
 import org.junit.Test;
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import static org.junit.Assert.assertTrue;
 
@@ -14,8 +13,8 @@ public class ParametersControllerTest {
         Response response = new Response();
         HashMap<String, String> expectedParameters = new HashMap<>();
         expectedParameters.put("hobby", "surfing");
-        request.setHttpVersion("HTTP/1.1");
-        request.setMethod("GET");
+        request.setHttpVersion(HTTPProtocol.PROTOCOL);
+        request.setMethod(HTTPProtocol.GET);
         request.setURI("/");
         request.setParameters(expectedParameters);
 

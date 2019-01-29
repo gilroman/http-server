@@ -5,7 +5,6 @@ import java.util.function.BiFunction;
 
 public class Router {
     private HashMap<String, BiFunction<Request, Response, Response>> get = new HashMap<>();
-    private HashMap<String, BiFunction<Request, Response, Response>> options = new HashMap<>();
     private HashMap<String, BiFunction<Request, Response, Response>> post = new HashMap<>();
     private enum METHOD {GET, OPTIONS, POST};
 
@@ -18,10 +17,6 @@ public class Router {
         get.put(route, controller);
     }
 
-    public void options(String route, BiFunction<Request, Response, Response> controller) {
-        options.put(route, controller);
-    }
-
     public void post(String route, BiFunction<Request, Response, Response> controller) {
         post.put(route, controller);
     }
@@ -32,8 +27,6 @@ public class Router {
         switch (METHOD.valueOf(method)) {
             case GET:
                 return this.get;
-            case OPTIONS:
-                return this.options;
             case POST:
                 return this.post;
         }
@@ -54,7 +47,7 @@ public class Router {
         String requestMethod = request.getMethod();
         String requestURI = request.getURI();
         HashMap<String, BiFunction<Request, Response, Response>> methodHash = getMapForMethod(requestMethod);
-        BiFunction<Request, Response, Response> controller = this.get.get(Routes.ROUTE_NOT_FOUND);
+        BiFunction<Request, Response, Response> controller = RouteNotFoundController.get;
 
         switch(METHOD.valueOf(requestMethod)) {
             case GET:
@@ -67,13 +60,13 @@ public class Router {
                 }
                 break;
             case OPTIONS:
-                controller = methodHash.get(Routes.STATIC_FILE_OPTIONS);
+                controller = StaticFileOptionsController.options;
                 break;
             case POST:
                 controller = methodHash.get(requestURI);
                 break;
             default:
-                controller = this.get.get(Routes.ROUTE_NOT_FOUND);
+                controller = RouteNotFoundController.get;
         }
 
         return controller;

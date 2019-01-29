@@ -2,6 +2,7 @@ package gil.server;
 
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class StaticFileOptionsControllerTest {
     StaticFileOptionsController staticFileOptionsController = new StaticFileOptionsController();
@@ -10,29 +11,29 @@ public class StaticFileOptionsControllerTest {
     public void shouldRespondToAnOPTIONSRequestForAnExistingStaticFile() {
         Request request = new Request();
         Response response = new Response();
-        request.setMethod("OPTIONS");
-        request.setHttpVersion("HTTP/1.1");
+        request.setMethod(HTTPProtocol.OPTIONS);
+        request.setHttpVersion(HTTPProtocol.PROTOCOL);
         request.setURI("/file%20with%20space.txt");
         String expectedHeaderFields = "Allow: OPTIONS, GET";
 
         staticFileOptionsController.options.apply(request, response);
 
-        assertEquals("200", response.getStatusCode());
-        assertEquals("OK", response.getReasonPhrase());
-        assertEquals(expectedHeaderFields, response.getAllow());
+        assertEquals(HTTPProtocol.STATUS_CODE_200, response.getStatusCode());
+        assertEquals(HTTPProtocol.REASON_PHRASE_OK, response.getReasonPhrase());
+        assertTrue(response.getHeaders().contains(expectedHeaderFields));
     }
 
     @Test
     public void shouldRespondWith404ToAnOPTIONSRequestForANonExistingStaticFile() {
         Request request = new Request();
         Response response = new Response();
-        request.setHttpVersion("HTTP/1.1");
-        request.setMethod("OPTIONS");
+        request.setHttpVersion(HTTPProtocol.PROTOCOL);
+        request.setMethod(HTTPProtocol.OPTIONS);
         request.setURI("/mystery-file.txt");
 
         staticFileOptionsController.options.apply(request, response);
 
-        assertEquals("404", response.getStatusCode());
-        assertEquals("Not Found", response.getReasonPhrase());
+        assertEquals(HTTPProtocol.STATUS_CODE_404, response.getStatusCode());
+        assertEquals(HTTPProtocol.REASON_PHRASE_NOT_FOUND, response.getReasonPhrase());
     }
 }

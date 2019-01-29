@@ -8,13 +8,11 @@ public class StaticFileOptionsController {
                 String uri = request.getURI();
 
                 if(StaticFileUtils.staticFileExists(uri)) {
-                    String allow = "Allow: OPTIONS, GET";
-                    response.setProtocol("HTTP/1.1");
-                    response.setStatusCode("200");
-                    response.setReasonPhrase("OK");
-                    response.setContentType("text/html; charset=UTF-8");
-                    response.setAllow(allow);
-                    response.setBody("");
+                    response.setProtocol(HTTPProtocol.PROTOCOL);
+                    response.setStatusCode(HTTPProtocol.STATUS_CODE_200);
+                    response.setReasonPhrase(HTTPProtocol.REASON_PHRASE_OK);
+                    response.addHeader(HTTPProtocol.CONTENT_TYPE,"text/html; charset=UTF-8");
+                    response.addHeader(HTTPProtocol.ALLOW, "OPTIONS, GET");
                 } else {
                     RouteNotFoundController.get.apply(request, response);
                 }

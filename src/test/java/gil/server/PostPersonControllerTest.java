@@ -22,7 +22,7 @@ public class PostPersonControllerTest {
 
         assertEquals("201", response.getStatusCode());
         assertEquals("Created", response.getReasonPhrase());
-        assertTrue(response.getLocation().contains("Location:"));
+        assertTrue(response.getHeaders().contains("Location:"));
         assertTrue(response.getBody().contains("id"));
     }
 

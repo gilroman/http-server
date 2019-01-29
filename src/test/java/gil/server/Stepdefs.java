@@ -2,7 +2,7 @@ package gradle.cucumber;
 
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-
+import gil.server.HTTPProtocol;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -12,7 +12,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -23,21 +22,34 @@ public class Stepdefs {
     String localhost = "127.0.0.1";
     int port = 4040;
 
+    public String readResponseBody(BufferedReader connectionInput) throws IOException {
+        StringBuilder response = new StringBuilder();
+        String line;
+
+        while((line = connectionInput.readLine()) != null) {
+            response.append(line);
+        }
+
+        return response.toString();
+    }
+
     @When("^I send a simple GET request$")
     public void iSendASimpleGetRequest() throws IOException {
         URL url = new URL(requestProtocol, localhost, port, "/");
         requestConnection = (HttpURLConnection) url.openConnection();
-        requestConnection.setRequestMethod("GET");
+        requestConnection.setRequestMethod(HTTPProtocol.GET);
         requestConnection.connect();
     }
 
     @Then("I get a response of {string}")
     public void iGetAResponseOf(String string) throws IOException {
-        String response;
         BufferedReader in = new BufferedReader(new InputStreamReader(
                 requestConnection.getInputStream()));
-        response = in.readLine();
+
+        String response = readResponseBody(in);
+
         requestConnection.disconnect();
+
         assertTrue(response.contains(string));
     }
 
@@ -45,7 +57,7 @@ public class Stepdefs {
     public void iSendASimpleGETRequestTo(String endpoint) throws IOException {
         URL url = new URL(requestProtocol, localhost, port, endpoint);
         requestConnection = (HttpURLConnection) url.openConnection();
-        requestConnection.setRequestMethod("GET");
+        requestConnection.setRequestMethod(HTTPProtocol.GET);
         requestConnection.connect();
     }
 
@@ -60,7 +72,7 @@ public class Stepdefs {
     public void iSendGETRequestWithASingleQueryTo(String endpoint) throws IOException {
         URL url = new URL(requestProtocol, localhost, port, endpoint);
         requestConnection = (HttpURLConnection) url.openConnection();
-        requestConnection.setRequestMethod("GET");
+        requestConnection.setRequestMethod(HTTPProtocol.GET);
         requestConnection.connect();
     }
 
@@ -69,7 +81,7 @@ public class Stepdefs {
         String response;
         BufferedReader in = new BufferedReader(new InputStreamReader(
                 requestConnection.getInputStream()));
-        response = in.readLine();
+        response = readResponseBody(in);
         requestConnection.disconnect();
         assertTrue(response.contains(parameters));
     }
@@ -78,7 +90,7 @@ public class Stepdefs {
     public void iSendAGETRequestWithMultipleQueryParametersTo(String endpoint) throws IOException {
         URL url = new URL(requestProtocol, localhost, port, endpoint);
         requestConnection = (HttpURLConnection) url.openConnection();
-        requestConnection.setRequestMethod("GET");
+        requestConnection.setRequestMethod(HTTPProtocol.GET);
         requestConnection.connect();
     }
 
@@ -87,7 +99,8 @@ public class Stepdefs {
         String response;
         BufferedReader in = new BufferedReader(new InputStreamReader(
                 requestConnection.getInputStream()));
-        response = in.readLine();
+        response = readResponseBody(in);
+        in.close();
         requestConnection.disconnect();
         assertTrue(response.contains(parameter1) && response.contains(parameter2));
     }
@@ -96,7 +109,7 @@ public class Stepdefs {
     public void iSendAnOPTIONSRequestTo(String endpoint) throws IOException {
         URL url = new URL(requestProtocol, localhost, port, endpoint);
         requestConnection = (HttpURLConnection) url.openConnection();
-        requestConnection.setRequestMethod("OPTIONS");
+        requestConnection.setRequestMethod(HTTPProtocol.OPTIONS);
         requestConnection.connect();
     }
 
@@ -104,7 +117,7 @@ public class Stepdefs {
     public void iGetAnHTTPResponseWithAnAllowHeaderFieldOf(String header) {
         Map<String, List<String>> headerFields = requestConnection.getHeaderFields();
         requestConnection.disconnect();
-        assertTrue(headerFields.get("Allow").contains(header));
+        assertTrue(headerFields.get(HTTPProtocol.ALLOW).contains(header));
     }
 
     @When("I send a POST request to {string}")
@@ -113,7 +126,7 @@ public class Stepdefs {
         URL url = new URL(requestProtocol, localhost, port, endpoint);
         requestConnection = (HttpURLConnection) url.openConnection();
         requestConnection.setDoOutput(true);
-        requestConnection.setRequestMethod("POST");
+        requestConnection.setRequestMethod(HTTPProtocol.POST);
         OutputStream outputStream = requestConnection.getOutputStream();
         OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream, "UTF-8");
         outputStreamWriter.write(jsonString);
@@ -123,6 +136,4 @@ public class Stepdefs {
 
         requestConnection.connect();
     }
-
-
 }
