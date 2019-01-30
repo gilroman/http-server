@@ -1,33 +1,20 @@
 package gil.server.router;
 
+import gil.server.http.HTTPProtocol;
 import gil.server.http.Request;
 import org.junit.Test;
 import static org.junit.Assert.assertTrue;
 
 public class RoutesTest {
-    private final String ROUTE_NOT_FOUND = "route-not-found";
-    Router router = new Router();
-
-    @Test
-    public void shouldSetADefaultRouteNotFoundRouteOnTheRouter() {
-        Request request = new Request();
-        Routes routes = new Routes();
-        request.setMethod("GET");
-        request.setURI(ROUTE_NOT_FOUND);
-        request.setHttpVersion("HTTP/1.1");
-
-        routes.addRoutes(router);
-
-        assertTrue(router.getRouteController(request).isPresent());
-    }
+   Router router = new Router();
 
     @Test
     public void shouldSetARootRouteOnTheRouter() {
         Request request = new Request();
         Routes routes = new Routes();
-        request.setMethod("GET");
+        request.setMethod(HTTPProtocol.GET);
         request.setURI("/");
-        request.setHttpVersion("HTTP/1.1");
+        request.setHttpVersion(HTTPProtocol.PROTOCOL);
 
         routes.addRoutes(router);
 
