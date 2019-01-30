@@ -1,9 +1,9 @@
 package gil.server;
 
 import gil.server.http.Response;
-
 import java.io.BufferedReader;
-import java.io.PrintWriter;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -37,24 +37,13 @@ public class ServerSocketWrapper implements ServerSocketWrapperInterface {
 
     private void processRequest(Connection connection) throws Exception {
         BufferedReader input = connection.getInput();
-        PrintWriter output = connection.getOutput();
+        OutputStream output = connection.getOutput();
         Response response = handler.processRequest(input);
         sendResponse(output, response);
     }
 
-    private void sendResponse(PrintWriter output, Response response) {
-        String body = response.getBody();
-        String contentLength = response.getContentLength();
-        String allow = response.getAllow();
-        String location = response.getLocation();
-        output.println(response.getStartLine());
-        output.println(response.getDate());
-        output.println(response.getContentType());
-        output.println(contentLength);
-        if (allow != null ) output.println(allow);
-        if (location != null ) output.println(location);
-        output.println();
-        if (body != null) output.println(response.getBody());
+    private void sendResponse(OutputStream output, Response response) throws IOException {
+        output.write(response.toByteArray());
     }
 
     public void close() throws Exception {

@@ -43,3 +43,7 @@ Feature: Server returns the right responses
   Scenario: Server can respond to OPTIONS request to a dynamic route
     When I send an OPTIONS request to "/api/people/0"
     Then I get an HTTP response with an Allow header field of "OPTIONS, GET"
+
+  Scenario: Server can respond to GET request to an image file
+     When I send a simple GET request to "/img/kitty-300x300.jpg"
+     Then I get an HTTP response with status code 200 and content-type field of "image/jpeg"

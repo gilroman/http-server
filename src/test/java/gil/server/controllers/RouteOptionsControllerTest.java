@@ -3,8 +3,8 @@ package gil.server.controllers;
 import gil.server.http.Request;
 import gil.server.http.Response;
 import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class RouteOptionsControllerTest {
 
@@ -25,6 +25,6 @@ public class RouteOptionsControllerTest {
         assertEquals("HTTP/1.1", response.getProtocol());
         assertEquals("200", response.getStatusCode());
         assertEquals("OK", response.getReasonPhrase());
-        assertEquals(expectedAllow, response.getAllow());
+        assertTrue(response.getHeaders().contains(expectedAllow));
     }
 }

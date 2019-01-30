@@ -3,28 +3,26 @@ package gil.server;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-
+import java.io.OutputStream;
 import java.net.Socket;
 
 public class SocketWrapper implements SocketWrapperInterface {
     private Socket socket;
     private BufferedReader input;
-    private PrintWriter output;
+    private OutputStream output;
 
 
     public SocketWrapper(Socket socket) throws IOException {
         this.socket = socket;
         this.input = new BufferedReader(new InputStreamReader(socket.getInputStream(), "US-ASCII"));
-        this.output = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
+        this.output = socket.getOutputStream();
     }
 
     public BufferedReader getInput() {
         return this.input;
     }
 
-    public PrintWriter getOutput() {
+    public OutputStream getOutput() {
         return this.output;
     }
 

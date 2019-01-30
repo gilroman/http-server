@@ -4,36 +4,32 @@ import org.junit.Test;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 
-
 public class ResponseTest {
     @Test
     public void shouldAllowSettingHTTPProtocol() {
         Response response = new Response();
-        String protocol = "HTTP/1.1";
 
-        response.setProtocol(protocol);
+        response.setProtocol(HTTPProtocol.PROTOCOL);
 
-        assertEquals(protocol, response.getProtocol());
+        assertEquals(HTTPProtocol.PROTOCOL, response.getProtocol());
     }
 
     @Test
     public void shouldAllowSettingHTTPStatusCode() {
         Response response = new Response();
-        String statusCode = "200";
 
-        response.setStatusCode(statusCode);
+        response.setStatusCode(HTTPProtocol.STATUS_CODE_200);
 
-        assertEquals(statusCode, response.getStatusCode());
+        assertEquals(HTTPProtocol.STATUS_CODE_200, response.getStatusCode());
     }
 
     @Test
     public void shouldAllowSettingReasonPhrase() {
         Response response = new Response();
-        String reasonPhrase = "OK";
 
-        response.setReasonPhrase(reasonPhrase);
+        response.setReasonPhrase(HTTPProtocol.REASON_PHRASE_OK);
 
-        assertEquals(reasonPhrase, response.getReasonPhrase());
+        assertEquals(HTTPProtocol.REASON_PHRASE_OK, response.getReasonPhrase());
     }
 
     @Test
@@ -41,9 +37,9 @@ public class ResponseTest {
         Response response = new Response();
         String startLine = "HTTP/1.1 200 OK";
 
-        response.setProtocol("HTTP/1.1");
-        response.setStatusCode("200");
-        response.setReasonPhrase("OK");
+        response.setProtocol(HTTPProtocol.PROTOCOL);
+        response.setStatusCode(HTTPProtocol.STATUS_CODE_200);
+        response.setReasonPhrase(HTTPProtocol.REASON_PHRASE_OK);
 
         assertEquals(startLine, response.getStartLine());
     }
@@ -53,29 +49,18 @@ public class ResponseTest {
         Response response = new Response();
         String body = "Some amazing content...";
 
-        response.setBody(body);
+        response.setBody(body.getBytes());
 
-        assertEquals(body, response.getBody());
+        assertEquals(body, new String(response.getBody()));
     }
 
     @Test
     public void shouldHaveADateHeader() {
         Response response = new Response();
 
-        String date = response.getDate();
+        String headers = response.getHeaders();
 
-        assertTrue(date.contains("Date"));
-    }
-
-    @Test
-    public void shouldAllowSettingContentType() {
-        Response response = new Response();
-        String contentType = "text/html; charset=UTF-8";
-        String expectedContentType = "Content-Type: text/html; charset=UTF-8";
-
-        response.setContentType(contentType);
-
-        assertEquals(expectedContentType, response.getContentType());
+        assertTrue(headers.contains("Date"));
     }
 
     @Test
@@ -83,30 +68,46 @@ public class ResponseTest {
         Response response = new Response();
         String body = "<!DOCTYPE html><html lang=\"en-us\"><head></head><body><h1>Hello, world!</h1></body></html>";
 
-        response.setBody(body);
+        response.setBody(body.getBytes());
 
-        assertEquals(body, response.getBody());
+        assertEquals(body, new String(response.getBody()));
     }
 
     @Test
     public void shouldHaveAContentLengthWhenGivenABody() {
         Response response = new Response();
-        response.setBody("<!DOCTYPE html><html lang=\"en-us\"><head></head><body><h1>Hello, world!</h1></body></html>");
+        String body = "<!DOCTYPE html><html lang=\"en-us\"><head></head><body><h1>Hello, world!</h1></body></html>";
+        response.setBody(body.getBytes());
 
-        String contentLength = response.getContentLength();
+        String headers = response.getHeaders();
 
-        assertTrue(contentLength.contains("Content-Length:"));
+        assertTrue(headers.contains("Content-Length:"));
     }
 
     @Test
-    public void shouldSetAllowHeaderField() {
+    public void shouldSetAHeaderField() {
         Response response = new Response();
-        String allow = "OPTIONS, GET";
-        String expectedAllowHeader = "Allow: OPTIONS, GET";
+        response.setProtocol(HTTPProtocol.PROTOCOL);
+        response.setStatusCode(HTTPProtocol.STATUS_CODE_200);
+        response.setReasonPhrase(HTTPProtocol.REASON_PHRASE_OK);
+        String allowHeaderValue = "OPTIONS, GET";
 
-        response.setAllow(allow);
+        response.addHeader(HTTPProtocol.ALLOW, allowHeaderValue);
 
-        assertEquals(expectedAllowHeader, response.getAllow());
+        assertTrue(response.getHeaders().contains(allowHeaderValue));
+    }
+
+    @Test
+    public void shouldSetTwoHeaderFields() {
+        Response response = new Response();
+        String allowHeaderValue = "OPTIONS, GET";
+        String contentTypeHeaderValue = "\"text/html; charset=UTF-8\"";
+
+        response.addHeader(HTTPProtocol.ALLOW, allowHeaderValue);
+        response.addHeader(HTTPProtocol.CONTENT_TYPE, contentTypeHeaderValue);
+
+        assertTrue(response.getHeaders().contains(allowHeaderValue));
+        assertTrue(response.getHeaders().contains(contentTypeHeaderValue));
     }
 
     @Test
@@ -114,8 +115,34 @@ public class ResponseTest {
         Response response = new Response();
         String expectedLocationHeader = "Location: /api/people/1";
 
-        response.setLocation(expectedLocationHeader);
+        response.addHeader(HTTPProtocol.LOCATION, expectedLocationHeader);
 
-        assertEquals(expectedLocationHeader, response.getLocation());
+        assertTrue(response.getHeaders().contains(expectedLocationHeader));
+    }
+
+    @Test
+    public void shouldSetAReasonPhraseProgrammatically() {
+        Response response = new Response();
+
+        response.setProtocol(HTTPProtocol.PROTOCOL);
+        response.setStatusCode(HTTPProtocol.STATUS_CODE_200);
+
+        assertEquals(HTTPProtocol.REASON_PHRASE_OK, response.getReasonPhrase());
+    }
+
+    @Test
+    public void shouldReturnABytesArrayRepresentationOfTheResponse() {
+        Response response = new Response();
+        StringBuilder expectedResponse = new StringBuilder();
+        response.setProtocol(HTTPProtocol.PROTOCOL);
+        response.setStatusCode(HTTPProtocol.STATUS_CODE_200);
+        response.setReasonPhrase(HTTPProtocol.REASON_PHRASE_OK);
+        response.setBody("".getBytes());
+        expectedResponse.append(response.getStartLine() + HTTPProtocol.CRLF +
+                                response.getHeaders() +
+                                HTTPProtocol.CRLF +
+                                new String(response.getBody()));
+
+        assertEquals(expectedResponse.toString(), new String(response.toByteArray()));
     }
 }

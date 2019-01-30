@@ -1,58 +1,41 @@
 package gil.server.http;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Response {
-    private String CONTENT_LENGTH = "Content-Length: ";
-    private String CONTENT_TYPE = "Content-Type: ";
-    private String DATE = "Date: ";
     private String SPACE = " ";
-    private String body;
-    private String contentLength;
-    private String contentType = "Content-Type: ";
-    private String date;
+    private String headerKeyValueSeparator = ": ";
+    private byte[] body;
+    private HashMap<String, String> headerFields;
     private String protocol;
     private String reasonPhrase;
     private String statusCode;
-    private String allow;
-    private String location;
 
     public Response() {
+        headerFields = new HashMap<>();
         setDate();
-        setBody("");
+        setBody("".getBytes());
     }
 
-    public String getBody() {
+    public byte[] getBody() {
         return body;
     }
 
-    public String getContentType() {
-        return contentType;
-    }
+    public String getHeaders() {
+        StringBuilder headers = new StringBuilder();
 
-    public String getContentLength() {
-        return contentLength;
-    }
+        for(Map.Entry<String, String> header : this.headerFields.entrySet()) {
+            headers.append(header.getKey() + headerKeyValueSeparator + header.getValue() + HTTPProtocol.CRLF);
+        }
 
-    public String getDate() {
-        return date;
+        return headers.toString();
     }
-
-    public String getAllow() {
-        return allow;
-    }
-
-    public void setAllow(String allow) {
-        this.allow = "Allow: " + allow;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public String getLocation() { return location; }
 
     public String getProtocol() {
         return protocol;
@@ -70,28 +53,23 @@ public class Response {
         return statusCode;
     }
 
-    public void setBody(String body) {
+    public void addHeader(String headerName, String headerValue) {
+        this.headerFields.put(headerName, headerValue);
+    }
+
+    public void setBody(byte[] body) {
         this.body = body;
-        setContentLength(this.body);
+        setContentLength(this.body.length);
     }
 
-    private void setContentLength (String body) {
-        if (!body.isEmpty()) {
-            byte[] responseBytes = body.getBytes();
-            this.contentLength = CONTENT_LENGTH + responseBytes.length;
-        } else {
-            this.contentLength = CONTENT_LENGTH + 0;
-        }
-    }
-
-    public void setContentType (String body) {
-        this.contentType = CONTENT_TYPE + body;
+    private void setContentLength (int bodyLength) {
+        this.headerFields.put(HTTPProtocol.CONTENT_LENGTH, String.valueOf(bodyLength));
     }
 
     private void setDate() {
         ZonedDateTime currentUTCDateTime = ZonedDateTime.now(ZoneOffset.UTC);
         String RFC1123FormattedDate = DateTimeFormatter.RFC_1123_DATE_TIME.format(currentUTCDateTime);
-        this.date = DATE + RFC1123FormattedDate;
+        this.headerFields.put(HTTPProtocol.DATE, RFC1123FormattedDate);
     }
 
     public void setProtocol(String protocol) {
@@ -104,5 +82,22 @@ public class Response {
 
     public void setStatusCode(String statusCode) {
         this.statusCode = statusCode;
+        this.reasonPhrase = HTTPProtocol.responsePhrases.get(statusCode);
+    }
+
+    public byte[] toByteArray() {
+        ByteArrayOutputStream responseStream = new ByteArrayOutputStream();
+
+        try {
+            responseStream.write(getStartLine().getBytes());
+            responseStream.write(HTTPProtocol.CRLF.getBytes());
+;            responseStream.write(getHeaders().getBytes());
+            responseStream.write(HTTPProtocol.CRLF.getBytes());
+            responseStream.write(getBody());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return responseStream.toByteArray();
     }
 }

@@ -2,6 +2,7 @@ package gil.server.controllers;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -23,7 +24,7 @@ public class StaticFileUtils {
     return URLDecoder.decode(STATIC_FILE_PATH.concat(filePath), StandardCharsets.UTF_8);
   }
 
-  public static String getTextFileContent(String filePath) throws IOException {
+  public static byte[] getTextFileContent(String filePath) throws IOException {
     String decodedPath = decodePath(filePath);
     File file = new File(decodedPath);
 
@@ -34,7 +35,7 @@ public class StaticFileUtils {
         contentBuilder.append(line);
     }
 
-    return contentBuilder.toString();
+    return contentBuilder.toString().getBytes();
   }
 
   public static String getFileType(String uri) {
@@ -44,7 +45,7 @@ public class StaticFileUtils {
 
     switch(fileExtension){
       case ".jpg":
-        fileType = "IMAGE";
+        fileType = "JPEG";
         break;
       case ".txt":
         fileType = "TEXT";
@@ -56,15 +57,21 @@ public class StaticFileUtils {
     return fileType;
   }
 
-  public static String getImageFileContent(String filePath) throws IOException {
+  public static byte[] getImageFileContent(String filePath) {
     String decodedPath = decodePath(filePath);
+    BufferedImage image;
+    byte[] data = null;
 
-    BufferedImage image = null;
     try {
       image = ImageIO.read(new File(decodedPath));
+      ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+      ImageIO.write(image, "jpg", outputStream );
+      data = outputStream.toByteArray();
+
     } catch (IOException e) {
+      e.printStackTrace();
     }
 
-    return image.toString();
+    return data;
   }
 }

@@ -1,21 +1,20 @@
 package gil.server;
 
-import org.junit.Test;
 import java.io.BufferedReader;
-import java.io.PrintWriter;
-import java.io.StringReader;
-import java.io.StringWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.StringReader;
+import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class ConnectionTest {
     String data = "GET / HTTP/1.1\r\n";
     StringReader dataIn = new StringReader(data);
-    StringWriter dataOut = new StringWriter();
-    PrintWriter printWriter = new PrintWriter(dataOut);
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     BufferedReader bufferedReader = new BufferedReader(dataIn);
-    SocketMock socketMock = new SocketMock(bufferedReader, printWriter);
+    SocketMock socketMock = new SocketMock(bufferedReader, outputStream);
     Connection connection = new Connection(socketMock);
 
     @Test
@@ -26,11 +25,14 @@ public class ConnectionTest {
     }
 
     @Test
-    public void shouldPrintOutgoingData() {
-        PrintWriter output = connection.getOutput();
+    public void shouldPrintOutgoingData() throws IOException {
+        OutputStream output = connection.getOutput();
         String outgoingMessage = "Message sent...";
-        output.print(outgoingMessage);
-        assertEquals(outgoingMessage, dataOut.toString());
+
+        output.write(outgoingMessage.getBytes());
+        String dataOut = new String(outputStream.toByteArray());
+
+        assertEquals(outgoingMessage, dataOut);
     }
 
     @Test

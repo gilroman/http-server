@@ -1,11 +1,14 @@
 package gil.server.controllers;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
-
 import org.junit.Test;
+import javax.imageio.ImageIO;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
 public class StaticFileUtilsTest {
     @Test
     public void shouldVerifyFileExists()
@@ -16,9 +19,9 @@ public class StaticFileUtilsTest {
     @Test
     public void shouldObtainStaticTextFileContent() throws IOException {
         String expectedContent = "This is a test file.";
-        String content = StaticFileUtils.getTextFileContent("test.txt");
+        byte[] content = StaticFileUtils.getTextFileContent("test.txt");
 
-        assertEquals(expectedContent, content);
+        assertEquals(expectedContent, new String(content));
     }
 
     @Test
@@ -26,7 +29,7 @@ public class StaticFileUtilsTest {
         String imageURI = "/img/kitty-300x300.jpg";
         String fileType = StaticFileUtils.getFileType(imageURI);
 
-        assertEquals("IMAGE", fileType);
+        assertEquals("JPEG", fileType);
     }
 
     @Test
@@ -38,10 +41,22 @@ public class StaticFileUtilsTest {
     }
 
     @Test
-    public void shouldObtainStaticImageFileContent() throws IOException {
-        String expectedContent = "This is a test file.";
-        String content = StaticFileUtils.getImageFileContent("/img/kitty-300x300.jpg");
+    public void shouldObtainStaticImageFileContent() {
+        String testUrlImageFilePath = "/img/kitty-300x300.jpg";
+        String testImage = "public/img/kitty-300x300.jpg";
+        BufferedImage image = null;
+        byte[] expectedData = null;
+        try {
+            image = ImageIO.read(new File(testImage));
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            ImageIO.write(image, "jpg", outputStream );
+            expectedData = outputStream.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        assertEquals(expectedContent, content);
+        byte[] imageBytes = StaticFileUtils.getImageFileContent(testUrlImageFilePath);
+
+        assertArrayEquals(expectedData, imageBytes);
     }
 }

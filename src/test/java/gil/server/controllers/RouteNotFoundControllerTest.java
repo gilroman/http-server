@@ -1,5 +1,6 @@
 package gil.server.controllers;
 
+import gil.server.http.HTTPProtocol;
 import gil.server.http.Request;
 import gil.server.http.Response;
 import org.junit.Test;
@@ -12,13 +13,13 @@ public class RouteNotFoundControllerTest {
     public void getShouldResultInResponseWith404Status() {
         Request request = new Request();
         Response response = new Response();
-        request.setHttpVersion("HTTP/1.1");
-        request.setMethod("GET");
+        request.setHttpVersion(HTTPProtocol.PROTOCOL);
+        request.setMethod(HTTPProtocol.GET);
         request.setURI("/fake-endpoint");
 
         routeNotFoundController.get.apply(request, response);
 
-        assertEquals("404", response.getStatusCode());
-        assertEquals("Not Found", response.getReasonPhrase());
+        assertEquals(HTTPProtocol.STATUS_CODE_404, response.getStatusCode());
+        assertEquals(HTTPProtocol.REASON_PHRASE_NOT_FOUND, response.getReasonPhrase());
     }
 }
