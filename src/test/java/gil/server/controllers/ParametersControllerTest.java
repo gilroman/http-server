@@ -1,5 +1,6 @@
 package gil.server.controllers;
 
+import gil.server.http.HTTPProtocol;
 import gil.server.http.Request;
 import gil.server.http.Response;
 import org.junit.Test;
@@ -15,8 +16,8 @@ public class ParametersControllerTest {
         Response response = new Response();
         HashMap<String, String> expectedParameters = new HashMap<>();
         expectedParameters.put("hobby", "surfing");
-        request.setHttpVersion("HTTP/1.1");
-        request.setMethod("GET");
+        request.setHttpVersion(HTTPProtocol.PROTOCOL);
+        request.setMethod(HTTPProtocol.GET);
         request.setURI("/");
         request.setParameters(expectedParameters);
 

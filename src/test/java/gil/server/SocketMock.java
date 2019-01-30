@@ -3,7 +3,6 @@ package gil.server;
 import java.io.BufferedReader;
 import java.io.PrintWriter;
 
-
 public class SocketMock implements SocketWrapperInterface {
         private Boolean closeCalled;
         private BufferedReader input;

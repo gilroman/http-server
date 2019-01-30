@@ -1,5 +1,6 @@
 package gil.server;
 
+import gil.server.http.HTTPProtocol;
 import gil.server.http.Response;
 import org.junit.Test;
 import java.io.BufferedReader;
@@ -14,13 +15,12 @@ public class HandlerTest {
     public void shouldReturnAResponseObject() throws IOException {
         String data = "GET / HTTP/1.1 text/html\r\n";
         String expectedBody = "Hello, world!";
-        String expectedStatusCode = "200";
         StringReader dataStream = new StringReader(data);
         BufferedReader bufferedReader = new BufferedReader(dataStream);
 
         Response result = handler.processRequest(bufferedReader);
 
         assertEquals(expectedBody, result.getBody());
-        assertEquals(expectedStatusCode, result.getStatusCode());
+        assertEquals(HTTPProtocol.STATUS_CODE_200, result.getStatusCode());
     }
 }

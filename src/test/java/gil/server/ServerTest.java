@@ -1,9 +1,7 @@
 package gil.server;
 
-
 import org.junit.Test;
 import static org.junit.Assert.assertTrue;
-
 
 public class ServerTest {
     ServerSocketMock serverSocketMock = new ServerSocketMock();
