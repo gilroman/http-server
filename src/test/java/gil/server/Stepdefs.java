@@ -146,4 +146,13 @@ public class Stepdefs {
         assertTrue(headerFields.get(HTTPProtocol.CONTENT_TYPE).contains(contentType));
     }
 
+    @Then("I get an HTTP response with status code {int} and anchor tag to an {string} directory")
+    public void i_get_an_HTTP_response_with_status_code_and_anchor_tag_to_a_text_txt_file(Integer statusCode, String expectedContent) throws IOException {
+        Integer responseCode = requestConnection.getResponseCode();
+        BufferedReader in = new BufferedReader(new InputStreamReader(requestConnection.getInputStream()));
+        String response = readResponseBody(in);
+        requestConnection.disconnect();
+        assertEquals(statusCode, responseCode);
+        assertTrue(response.contains(expectedContent));
+    }
 }

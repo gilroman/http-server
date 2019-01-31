@@ -1,5 +1,6 @@
 package gil.server.router;
 
+import gil.server.controllers.DirectoryController;
 import gil.server.controllers.ParametersController;
 import gil.server.controllers.PersonController;
 import gil.server.controllers.RootEndpointController;
@@ -7,6 +8,9 @@ import gil.server.data.FileIO;
 import gil.server.data.JSONDataStore;
 
 public class Routes {
+    public static final String PUBLIC_FOLDER = "public";
+    public static final String STATIC_FILE_URL = "/" + PUBLIC_FOLDER;
+
     static FileIO fio = new FileIO("people.txt");
     static JSONDataStore dataStore = new JSONDataStore(fio);
     static PersonController personController = new PersonController(dataStore);
@@ -16,5 +20,6 @@ public class Routes {
         router.get("/api/parameters", ParametersController.get);
         router.get("/api/people/[0-9]+", personController.get);
         router.post("/api/people", personController.post);
+        router.get(STATIC_FILE_URL + ".*", DirectoryController.get);
     }
 }

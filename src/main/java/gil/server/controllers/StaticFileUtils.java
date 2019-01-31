@@ -1,5 +1,6 @@
 package gil.server.controllers;
 
+import gil.server.router.Routes;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -12,7 +13,7 @@ import java.util.List;
 
 public class StaticFileUtils {
 
-  public static String STATIC_FILE_PATH = "public/";
+  public static String STATIC_FILE_PATH = Routes.PUBLIC_FOLDER + "/";
 
   public static Boolean staticFileExists(String filePath) {
     String decodedPath = decodePath(filePath);
