@@ -16,31 +16,43 @@ import java.util.function.BiFunction;
 
 public class PersonController {
     private static JSONDataStore dataStore;
+    private static JsonObjectBuilder jsonBuilder = Json.createObjectBuilder();
+    private static JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
     private static PeopleData people = new PeopleData();
+    private static final String route = "/api/people/";
 
     public PersonController(JSONDataStore dataStore) {
         this.dataStore = dataStore;
     }
 
+    private static Integer parsePersonId(Request request) {
+        int indexOfId = 1;
+        String requestURI = request.getURI();
+        String[] uri = requestURI.split(route);
+        String id = uri[indexOfId];
+
+        return Integer.parseInt(id);
+    }
+
     public static BiFunction<Request, Response, Response> get =
             (request, response) -> {
-                String requestURI = request.getURI();
-                String[] uri = requestURI.split("/api/people/");
-                int indexOfId = 1;
-                String id = uri[indexOfId];
+                Integer id = parsePersonId(request);
 
                 try {
                     people.updatePeople(dataStore.loadData());
-                    Person person = people.getPerson(Integer.parseInt(id));
+                    Person person = people.getPerson(id);
                     Integer pid = person.getId();
                     String name = person.getName();
                     String email = person.getEmail();
-                    String body = "{ \"id\": " + pid + ", \"name\": \"" + name + "\", \"email\": \"" + email + "\"}";
+                    JsonObject body = jsonBuilder.add("id", pid)
+                                                 .add("name", name)
+                                                 .add("email", email)
+                                                 .build();
                     response.setProtocol(HTTPProtocol.PROTOCOL);
                     response.setStatusCode(HTTPProtocol.STATUS_CODE_200);
                     response.setReasonPhrase(HTTPProtocol.REASON_PHRASE_OK);
                     response.addHeader(HTTPProtocol.CONTENT_TYPE, "application/json");
-                    response.setBody(body.getBytes());
+                    response.setBody(body.toString().getBytes());
 
                 } catch (Exception e) {
                     response.setProtocol(HTTPProtocol.PROTOCOL);
@@ -54,12 +66,13 @@ public class PersonController {
 
     public static BiFunction<Request, Response, Response> post =
             (request, response) -> {
+                String requestBody = request.getBody();
+                JsonObject personJSON = people.getPersonJSONObject(requestBody);
+
                 try {
                     JsonObject data = dataStore.loadData();
 
                     if (data.isEmpty()) {
-                        JsonObjectBuilder jsonBuilder = Json.createObjectBuilder();
-                        JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
                         JsonArray jsonArray = jsonArrayBuilder.build();
                         data = jsonBuilder.add("people", jsonArray).build();
                     }
@@ -68,9 +81,6 @@ public class PersonController {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
-                String requestBody = request.getBody();
-                JsonObject personJSON = people.getPersonJSONObject(requestBody);
 
                 if (personJSON.containsKey("name") && personJSON.containsKey("email")) {
                     String name = personJSON.getString("name");
@@ -85,12 +95,12 @@ public class PersonController {
                     }
 
                     Integer personId = person.getId();
-                    String body = "{ \"id\": " + personId + " }";
+                    String body = jsonBuilder.add("id", personId).build().toString();
                     response.setProtocol(HTTPProtocol.PROTOCOL);
                     response.setStatusCode(HTTPProtocol.STATUS_CODE_201);
                     response.setReasonPhrase(HTTPProtocol.REASON_PHRASE_CREATED);
                     response.addHeader(HTTPProtocol.CONTENT_TYPE,"application/json");
-                    response.addHeader(HTTPProtocol.LOCATION,"/api/people/" + personId);
+                    response.addHeader(HTTPProtocol.LOCATION,route + personId);
                     response.setBody(body.getBytes());
 
                 } else {

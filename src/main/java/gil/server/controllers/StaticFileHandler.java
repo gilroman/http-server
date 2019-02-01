@@ -9,23 +9,25 @@ public class StaticFileHandler {
     public static BiFunction<Request, Response, Response> get =
             (request, response) -> {
                 String uri = request.getURI();
+                String contentType = "";
                 byte[] body = "".getBytes();
 
                 try {
                     switch(StaticFileUtils.getFileType(uri)) {
                         case "TEXT":
                             body = StaticFileUtils.getTextFileContent(uri);
-                            response.addHeader(HTTPProtocol.CONTENT_TYPE,"text/html; charset=UTF-8");
+                            contentType = "text/html; charset=UTF-8";
                             break;
                         case "JPEG":
                             body = StaticFileUtils.getImageFileContent(uri);
-                            response.addHeader(HTTPProtocol.CONTENT_TYPE,"image/jpeg");
+                            contentType = "image/jpeg";
                             break;
                     }
 
                     response.setProtocol(HTTPProtocol.PROTOCOL);
                     response.setStatusCode(HTTPProtocol.STATUS_CODE_200);
                     response.setReasonPhrase(HTTPProtocol.REASON_PHRASE_OK);
+                    response.addHeader(HTTPProtocol.CONTENT_TYPE, contentType);
                     response.setBody(body);
                 } catch (Exception e) {
                     RouteNotFoundController.get.apply(request, response);

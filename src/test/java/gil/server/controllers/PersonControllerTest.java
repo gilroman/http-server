@@ -6,12 +6,17 @@ import gil.server.data.PeopleData;
 import gil.server.http.HTTPProtocol;
 import gil.server.http.Request;
 import gil.server.http.Response;
-import org.junit.Test;
+import javax.json.Json;
+import javax.json.JsonObjectBuilder;
 import java.io.IOException;
+import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class PersonControllerTest {
+
+    JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
+
     @Test
     public void shouldRespondToAPOSTRequest() throws IOException {
         FileIO fio = new FileIO("peopleTest.txt");
@@ -20,7 +25,9 @@ public class PersonControllerTest {
         PersonController personController = new PersonController(dataStore);
         Request request = new Request();
         Response response = new Response();
-        String jsonBody = "{\"name\": \"Gil\", \"email\": \"g@tdd.com\"}";
+        String jsonBody = jsonObjectBuilder.add("name", "Gil")
+                                           .add("email", "g@tdd.com")
+                                           .build().toString();
         request.setMethod(HTTPProtocol.POST);
         request.setHttpVersion(HTTPProtocol.PROTOCOL);
         request.setURI("/api/people");
@@ -43,7 +50,9 @@ public class PersonControllerTest {
         PersonController personController = new PersonController(dataStore);
         Request request = new Request();
         Response response = new Response();
-        String jsonBody = "{\"badKey\": \"Gil\", \"email\": \"g@tdd.com\"}";
+        String jsonBody = jsonObjectBuilder.add("badKey", "Gil")
+                                           .add("email", "g@tdd.com")
+                                           .build().toString();
         request.setMethod(HTTPProtocol.POST);
         request.setHttpVersion(HTTPProtocol.PROTOCOL);
         request.setURI("/api/people");
@@ -64,7 +73,10 @@ public class PersonControllerTest {
         PersonController personController = new PersonController(dataStore);
         people.addPerson("Gil", "gil@tdd.com");
         dataStore.storeData(people.getPeople());
-        String expectedBody = "{ \"id\": 0, \"name\": \"Gil\", \"email\": \"gil@tdd.com\"}";
+        String expectedBody = jsonObjectBuilder.add("id", 0)
+                                               .add("name", "Gil")
+                                               .add("email", "gil@tdd.com")
+                                               .build().toString();
         Request request = new Request();
         Response response = new Response();
         request.setMethod(HTTPProtocol.GET);

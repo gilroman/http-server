@@ -3,12 +3,19 @@ package gil.server.router;
 import gil.server.http.HTTPProtocol;
 import gil.server.http.Request;
 import gil.server.http.Response;
+import org.junit.BeforeClass;
+import org.junit.experimental.runners.Enclosed;
+import org.junit.runner.RunWith;
 import org.junit.Test;
+import javax.json.Json;
+import javax.json.JsonObjectBuilder;
 import java.util.HashMap;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+@RunWith(Enclosed.class)
 public class RouterTest {
+    private static JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
 
     @Test
     public void shouldAllowSettingAnEndpointForGetMethod() {
@@ -127,24 +134,6 @@ public class RouterTest {
    }
 
     @Test
-    public void shouldCallThePostPersonController() {
-        Router router = new Router();
-        Request request = new Request();
-        request.setMethod(HTTPProtocol.POST);
-        request.setHttpVersion(HTTPProtocol.PROTOCOL);
-        request.setURI("/api/people");
-        request.setBody("{\"name\": \"Gil\", \"email\": \"g@tdd.com\"}");
-        String expectedHeaderFields = "Location: /api/people/";
-
-        Response response = router.route(request);
-
-        assertEquals(HTTPProtocol.PROTOCOL, response.getProtocol());
-        assertEquals(HTTPProtocol.STATUS_CODE_201, response.getStatusCode());
-        assertEquals(HTTPProtocol.REASON_PHRASE_CREATED, response.getReasonPhrase());
-        assertTrue(response.getHeaders().contains(expectedHeaderFields));
-    }
-
-    @Test
     public void shouldSayIfRequestURIMatchesRoute() {
         Router router = new Router();
         Request request = new Request();
@@ -156,20 +145,51 @@ public class RouterTest {
         assertTrue(router.routeMatches(request, route));
     }
 
-    @Test
-    public void shouldCallThePersonController() {
-        Router router = new Router();
-        Response response;
-        Request request = new Request();
-        request.setMethod(HTTPProtocol.GET);
-        request.setHttpVersion(HTTPProtocol.PROTOCOL);
-        request.setURI("/api/people/0");
+    public static class routesToPersonControllerTest {
+        private static Router router;
+        private static Request request;
+        private static Response response;
 
-        response = router.route(request);
+        @BeforeClass
+        public static void saveAPersonToDataStore() {
+            String body = jsonObjectBuilder.add("name", "Gil")
+                                           .add("email", "g@tdd.com")
+                                           .build().toString();
+            router = new Router();
+            request = new Request();
+            request.setMethod(HTTPProtocol.POST);
+            request.setHttpVersion(HTTPProtocol.PROTOCOL);
+            request.setURI("/api/people");
+            request.setBody(body);
 
-        assertEquals(HTTPProtocol.PROTOCOL, response.getProtocol());
-        assertEquals(HTTPProtocol.STATUS_CODE_200, response.getStatusCode());
-        assertEquals(HTTPProtocol.REASON_PHRASE_OK, response.getReasonPhrase());
+            response = router.route(request);
+        }
+
+        @Test
+        public void shouldCallThePersonPostController() {
+            String expectedHeaderFields = "Location: /api/people/";
+
+            assertEquals(HTTPProtocol.PROTOCOL, response.getProtocol());
+            assertEquals(HTTPProtocol.STATUS_CODE_201, response.getStatusCode());
+            assertEquals(HTTPProtocol.REASON_PHRASE_CREATED, response.getReasonPhrase());
+            assertTrue(response.getHeaders().contains(expectedHeaderFields));
+        }
+
+        @Test
+        public void shouldCallThePersonController() {
+            Router router = new Router();
+            Response response;
+            Request request = new Request();
+            request.setMethod(HTTPProtocol.GET);
+            request.setHttpVersion(HTTPProtocol.PROTOCOL);
+            request.setURI("/api/people/0");
+
+            response = router.route(request);
+
+            assertEquals(HTTPProtocol.PROTOCOL, response.getProtocol());
+            assertEquals(HTTPProtocol.STATUS_CODE_200, response.getStatusCode());
+            assertEquals(HTTPProtocol.REASON_PHRASE_OK, response.getReasonPhrase());
+        }
     }
 
     @Test
